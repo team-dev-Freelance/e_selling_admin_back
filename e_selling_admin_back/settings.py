@@ -31,7 +31,8 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 DEBUG = True
 
 # ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['esellingadminback-production.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://esellingadminback-production.up.railway.app']
 
 APPEND_SLASH = False
 
