@@ -168,16 +168,16 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     # Uploader un logo
-    def upload_logo(request):
-        if request.method == 'POST':
-            form = PersonneForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                return redirect('success')
-        else:
-            form = PersonneForm()
-        return render(request, 'upload_logo.html', {'form': form})
-
-    def success(request):
-        return HttpResponse('Photo téléchargée avec succès')
+    # def upload_logo(request):
+    #     if request.method == 'POST':
+    #         form = PersonneForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             form.save()
+    #             return redirect('success')
+    #     else:
+    #         form = PersonneForm()
+    #     return render(request, 'upload_logo.html', {'form': form})
+    #
+    # def success(request):
+    #     return HttpResponse('Photo téléchargée avec succès')
 
