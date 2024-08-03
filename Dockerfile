@@ -20,7 +20,7 @@ RUN python -m venv /opt/venv && \
     pip install -r requirements.txt
 
 # Exposer le port que l'application utilisera
-EXPOSE 80
+EXPOSE 8000
 
 # Définir la commande pour démarrer l'application
-CMD ["/opt/venv/bin/gunicorn", "--bind", "0.0.0.0:80", "e_selling_admin_back.wsgi:application"]
+CMD ["/opt/venv/bin/gunicorn", "--bind", "0.0.0.0:8000", "e_selling_admin_back.wsgi:application"]
