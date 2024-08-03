@@ -1,0 +1,53 @@
+#version: '3.8'
+#services:
+#  db:
+#    image: mysql:latest
+#    environment:
+##      MYSQL_ROOT_PASSWORD: root_password
+#      MYSQL_DATABASE: selling_db
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: ewxveSjrgbwpLaZJnPHAkanABWvcUasO
+#    volumes:
+#      - db-data:/var/lib/mysql
+##    networks:
+##      - my-network
+#
+#  web:
+#    image: my-django-app
+#    depends_on:
+#      - db
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      - DATABASE_URL=mysql://root:ewxveSjrgbwpLaZJnPHAkanABWvcUasO@mysql.railway.internal/selling_db
+##    networks:
+##      - my-network
+#
+#networks:
+#  my-network:
+#    driver: bridge
+#
+#volumes:
+#  db-data:
+
+version: '3.8'
+services:
+  web:
+    image: my-django-app
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+#      - DATABASE_URL=mysql://root:ewxveSjrgbwpLaZJnPHAkanABWvcUasO@mysql.railway.internal/railway
+      - DATABASE_URL=mysql://root:ewxveSjrgbwpLaZJnPHAkanABWvcUasO@monorail.proxy.rlwy.net:37360/railway
+    depends_on:
+      - db
+
+#networks:
+#  default:
+#    external:
+#      name: my-network
+
+volumes:
+  db-data:

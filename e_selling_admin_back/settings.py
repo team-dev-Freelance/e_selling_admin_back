@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,9 +31,9 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['esellingadminback-production.up.railway.app']
-CSRF_TRUSTED_ORIGINS = ['https://esellingadminback-production.up.railway.app']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['esellingadminback-production.up.railway.app']
+# CSRF_TRUSTED_ORIGINS = ['https://esellingadminback-production.up.railway.app']
 
 APPEND_SLASH = False
 
@@ -104,16 +105,41 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 #     }
 # }
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'selling_db',
+#         'USER': 'koire-dev',
+#         'PASSWORD': 'koire',
+#         'HOST': 'db',
+#         'PORT': '3306',
+#     }
+# }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'railway',
+#         'USER': 'root',
+#         'PASSWORD': 'ewxveSjrgbwpLaZJnPHAkanABWvcUasO',
+#         'HOST': 'mysql.railway.internal',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'ewxveSjrgbwpLaZJnPHAkanABWvcUasO',
-        'HOST': 'mysql.railway.internal',
-        'PORT': '3306',
+        'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'ewxveSjrgbwpLaZJnPHAkanABWvcUasO'),
+        'HOST': os.environ.get('MYSQL_HOST', 'monorail.proxy.rlwy.net'),
+        'PORT': os.environ.get('MYSQL_PORT', '37360'),
     }
 }
+
 
 REST_FRAMEWORK = {
 

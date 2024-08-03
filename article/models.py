@@ -9,7 +9,7 @@ class Article(models.Model):
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=False)
-    logo = models.ImageField(upload_to='photos/')
+    logo = models.ImageField(upload_to='photos/', default='default_logo.png')
 
     def __str__(self):
         return self.label

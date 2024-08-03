@@ -28,6 +28,7 @@ class Member(AbstractBaseUser):
     active = models.BooleanField(default=True)
     organisation = models.ForeignKey(Organisation, related_name='members', on_delete=models.CASCADE, null=False, blank=False)
     rule = models.ForeignKey(Role, on_delete=models.CASCADE, null=False, blank=False)
+    logo = models.ImageField(upload_to='photos/', default='default_logo.png')
 
     objects = MemberManager()
 

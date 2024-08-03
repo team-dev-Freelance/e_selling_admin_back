@@ -6,7 +6,7 @@ class Organisation(models.Model):
     description = models.TextField()
     createDate = models.DateField(auto_now_add=True, editable=False)
     active = models.BooleanField(default=True)
-    logo = models.ImageField(upload_to='photos/')
+    logo = models.ImageField(upload_to='photos/', default='default_logo.png')
 
     def __str__(self):
         return self.label
