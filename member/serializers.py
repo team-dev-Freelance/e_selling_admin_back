@@ -10,8 +10,8 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = ['email', 'name', 'phone', 'active', 'organisation', 'rule',
                   'full_name']  # Champs spécifiques
 
-    def get_full_name(self, obj):
-        return f"{obj.name}"  # Exemple de champ personnalisé, ici on retourne simplement le nom
+    # def get_full_name(self, obj):
+    #     return f"{obj.name}"  # Exemple de champ personnalisé, ici on retourne simplement le nom
 
     def validate_phone(self, value):
         if not value.startswith(('62', '65', '67', '68', '69')):
