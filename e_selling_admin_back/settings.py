@@ -90,11 +90,15 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'selling_db',  # Nom de votre base de données
+        #'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql://root:ewxveSjrgbwpLaZJnPHAkanABWvcUasO@monorail.proxy.rlwy.net:37360/railway',
+        #'NAME': 'selling_db',  # Nom de votre base de données
+        'NAME': 'railway',
         'USER': 'root',  # Votre nom d'utilisateur MySQL
-        'PASSWORD': 'koire',  # Votre mot de passe MySQL
-        'HOST': 'localhost',  # L'hôte de votre base de données
+        #'PASSWORD': 'koire',  # Votre mot de passe MySQL
+        'PASSWORD': 'ewxveSjrgbwpLaZJnPHAkanABWvcUasO',
+        #'HOST': 'localhost',  # L'hôte de votre base de données
+        'HOST': 'mysql.railway.internal',
         'PORT': '3306',  # Le port de votre base de données
     }
 }
