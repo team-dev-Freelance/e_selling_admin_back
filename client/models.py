@@ -27,6 +27,7 @@ class Client(AbstractBaseUser):
     active = models.BooleanField(default=True)
     password = models.CharField(max_length=255)
     articles = models.ManyToManyField(Article, blank=False)
+    logo = models.ImageField(upload_to='photos/', default='default_logo.png')
 
     objects = ClientManager()
 
