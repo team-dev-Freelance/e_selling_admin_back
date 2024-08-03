@@ -23,4 +23,4 @@ RUN python -m venv /opt/venv && \
 EXPOSE 80
 
 # Définir la commande pour démarrer l'application
-CMD ["/opt/venv/bin/gunicorn", "--bind", "0.0.0.0:8000", "e_selling_admin_back.wsgi:application"]
+CMD ["/opt/venv/bin/gunicorn", "--bind", "0.0.0.0:80", "e_selling_admin_back.wsgi:application"]
