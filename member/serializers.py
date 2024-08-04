@@ -3,7 +3,7 @@ from .models import Member
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()  # Champ personnalisé
+    # full_name = serializers.SerializerMethodField()  # Champ personnalisé
 
     class Meta:
         model = Member
