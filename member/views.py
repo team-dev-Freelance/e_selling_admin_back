@@ -50,16 +50,7 @@ class MemberViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():
-            member = serializer.save()
-            add_privilege = Privilegies.objects.get_or_create(privilege=Privilege.ADD)[0]
-            all_privilege = Privilegies.objects.get_or_create(privilege=Privilege.ALL)[0]
-
-            if member.rule.role in [Rule.ADMIN, Rule.MEMBER]:
-                member.rule.privileges.add(add_privilege)
-                if member.rule.role == Rule.USER:
-                    member.rule.privileges.add(all_privilege)
-
-            member.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
