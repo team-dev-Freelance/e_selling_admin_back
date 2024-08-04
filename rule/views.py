@@ -15,7 +15,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     serializer_class = RoleSerializer
 
     @action(detail=False, methods=['post'], url_path='add')
-    def create(self, request):
+    def ajouter(self, request):
         serializer = RoleSerializer(data=request.data)
         if serializer.is_valid():
             role = serializer.save()
