@@ -68,20 +68,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Liste des articles publies par un utilisateur: article/list_articles/member/{id}/
-    @action(detail=False, methods=['get'], url_path='list_articles/member/(?P<member_id>[^/.]+)')
-    def list_articles(self, request, member_id=None):
-        articles = Article.objects.filter(member_id=member_id).distinct()
-        serializer = self.get_serializer(articles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # Liste des articles actifs publies par un utilisateur: article/list_actifs_articles/member/{id}/
-    @action(detail=False, methods=['get'], url_path='list_actifs_articles/member/(?P<member_id>[^/.]+)')
-    def list_articles(self, request, member_id=None):
-        articles = Article.objects.filter(member_id=member_id, active=True).distinct()
-        serializer = self.get_serializer(articles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     # Desactiver un article: article/{id}/deactivate/
     @action(detail=True, methods=['post'], url_path='deactivate')
     def deactivate_art(self, request, pk=None):
@@ -92,4 +78,18 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return Response({'status': 'article deactivated'}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'article already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Liste des articles publies par un utilisateur: article/list_articles/member/{id}/
+    @action(detail=False, methods=['get'], url_path='list_articles/member/(?P<member_id>[^/.]+)')
+    def list_articles_member(self, request, member_id=None):
+        articles = Article.objects.filter(member_id=member_id).distinct()
+        serializer = self.get_serializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # Liste des articles actifs publies par un utilisateur: article/list_actifs_articles/member/{id}/
+    @action(detail=False, methods=['get'], url_path='list_actifs_articles/member/(?P<member_id>[^/.]+)')
+    def list_articles_actifs_user(self, request, member_id=None):
+        articles = Article.objects.filter(member_id=member_id, active=True).distinct()
+        serializer = self.get_serializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 

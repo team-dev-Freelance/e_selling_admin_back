@@ -33,7 +33,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     # Liste des membres actifs: member/list_active_members/
-    @action(detail=True, methods=['get'], url_path='list_active_members')
+    @action(detail=False, methods=['get'], url_path='list_active_members')
     def list_active_members(self, request):
         members = Member.objects.filter(active=True).distinct()
         serializer = MemberSerializer(members, many=True)

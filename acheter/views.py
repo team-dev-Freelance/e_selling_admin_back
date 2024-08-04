@@ -67,16 +67,9 @@ class AcheterViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Liste des achats actives: acheter/list_active_acheter/
-    @action(detail=False, methods=['get'])
-    def list_active_acheter(self, request):
-        active_acheter = Acheter.objects.filter(active=True)
-        serializer = self.get_serializer(active_acheter, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     # Liste des achats actives d'une organisation: acheter/list_active_acheter/organisation/{id}/
     @action(detail=False, methods=['get'], url_path='list_active_acheter/organisation/(?P<organisation_id>[^/.]+)')
-    def list_active_acheter(self, request, organisation_id=None):
+    def list_active_acheter_by_org(self, request, organisation_id=None):
         try:
             organisation = Organisation.objects.get(pk=organisation_id)
         except Organisation.DoesNotExist:
@@ -89,17 +82,19 @@ class AcheterViewSet(viewsets.ModelViewSet):
         serializer = AcheterSerializer(acheter_list, many=True)
         return Response(serializer.data)
 
-    # Liste des achats actives d'une organisation pour un membre: acheter/list_active_acheter/organisation/{id}/member/{id}/
-    @action(detail=False, methods=['get'], url_path='list_active_acheter_member/organisation/(?P<organisation_id>[^/.]+)/member/(?P<member_id>[^/.]+)')
+    # Liste des achats actives d'une organisation pour un membre: acheter/list_active_acheter_member/organisation/{id}/member/{id}/
+    @action(detail=False, methods=['get'],
+            url_path='list_active_acheter_member/organisation/(?P<organisation_id>[0-9]+)/member/(?P<member_id>[0-9]+)')
     def list_active_acheter_by_member(self, request, organisation_id=None, member_id=None):
         try:
             organisation = Organisation.objects.get(pk=organisation_id)
-            # member = Member.objects.get(pk=member_id)
+            member = Member.objects.get(pk=member_id)
         except Organisation.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        except Member.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        # members = organisation.members.all().distinct()
-        # articles = organisation.articles.all()  # Obtenir tous les articles de l'organisation
+        # Get active articles for the member
         articles = Article.objects.filter(active=True, member_id=member_id).distinct()
         acheter_list = Acheter.objects.filter(active=True, article__in=articles).distinct()
         serializer = AcheterSerializer(acheter_list, many=True)
@@ -115,3 +110,10 @@ class AcheterViewSet(viewsets.ModelViewSet):
             return Response({'status': 'achat deactivated'}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'achat already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Liste des achats actives: acheter/list_active_acheters/
+    @action(detail=False, methods=['get'], url_path='list_active_acheter')
+    def list_active_acheter(self, request):
+        active_acheter = Acheter.objects.filter(active=True)
+        serializer = self.get_serializer(active_acheter, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

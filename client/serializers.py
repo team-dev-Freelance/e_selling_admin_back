@@ -9,7 +9,7 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         # fields = ['email', 'name', 'phone', 'articles', 'logo']  # Liste des champs à inclure dans le sérialiseur
         exclude = ['active']
-        
+
     def validate_phone(self, value):
         """
         Validation personnalisée pour le champ `phone`.
@@ -21,16 +21,9 @@ class ClientSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        """
-        Crée une instance de Client à partir des données validées.
-        """
-        # Vous pouvez ajouter des logiques personnalisées pour la création ici si nécessaire
         return Client.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        """
-        Met à jour une instance existante de Client avec les données validées.
-        """
         instance.name = validated_data.get('name', instance.name)
         instance.phone = validated_data.get('phone', instance.phone)
         instance.active = validated_data.get('active', instance.active)
