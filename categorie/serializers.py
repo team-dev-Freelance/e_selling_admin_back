@@ -5,6 +5,5 @@ from .models import Categorie
 class CategorieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categorie
-        fields = '__all__'
         exclude = ['active']
 
