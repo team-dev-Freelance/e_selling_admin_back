@@ -7,8 +7,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Member
-        fields = ['email', 'name', 'phone', 'active', 'organisation', 'rule',
-                  'full_name']  # Champs spécifiques
+        fields = ['email', 'name', 'phone', 'organisation', 'rule']  # Champs spécifiques
 
     # def get_full_name(self, obj):
     #     return f"{obj.name}"  # Exemple de champ personnalisé, ici on retourne simplement le nom

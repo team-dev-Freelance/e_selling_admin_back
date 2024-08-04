@@ -7,7 +7,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ['email', 'name', 'phone', 'active']  # Liste des champs à inclure dans le sérialiseur
+        fields = ['email', 'name', 'phone', 'articles', 'logo']  # Liste des champs à inclure dans le sérialiseur
 
     def validate_phone(self, value):
         """

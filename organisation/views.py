@@ -7,7 +7,6 @@ from rest_framework import status
 
 from article.models import Article
 from article.serializers import ArticleSerializer
-from member.forms import PersonneForm
 from member.serializers import MemberSerializer
 from .models import Organisation
 from .serializers import OrganisationSerializer

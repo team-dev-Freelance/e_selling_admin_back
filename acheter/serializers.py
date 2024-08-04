@@ -7,7 +7,7 @@ class AcheterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Acheter
-        fields = ['client', 'article', 'quantity', 'createDate', 'active', 'total_price']
+        fields = ['client', 'article', 'quantity', 'createDate', 'total_price']
 
     def get_total_price(self, obj):
         return obj.get_total_price()
