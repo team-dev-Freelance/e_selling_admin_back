@@ -5,5 +5,5 @@ from .models import Role
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        exclude = ['active']
+        exclude = ['active', 'privileges']
 
