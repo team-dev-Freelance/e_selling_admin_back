@@ -18,3 +18,4 @@ class MemberSerializer(serializers.ModelSerializer):
         if len(value) != 9 or not value.isdigit():
             raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
         return value
+

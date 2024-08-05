@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -23,11 +25,17 @@ class ClientManager(BaseUserManager):
 class Client(AbstractBaseUser):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, default='')
     active = models.BooleanField(default=True)
     password = models.CharField(max_length=255)
     # articles = models.ManyToManyField(Article, blank=False)
     logo = models.ImageField(upload_to='photos/', default='default_logo.png')
+    logo_name = models.CharField(max_length=255, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.logo:
+            self.logo_name = os.path.basename(self.logo.name)
+        super().save(*args, **kwargs)
 
     objects = ClientManager()
 
