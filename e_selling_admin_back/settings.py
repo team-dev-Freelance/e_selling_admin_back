@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['http://localhost:4200', '*']
 # ALLOWED_HOSTS = ['esellingadminback-production.up.railway.app']
 # CSRF_TRUSTED_ORIGINS = ['https://esellingadminback-production.up.railway.app']
 
