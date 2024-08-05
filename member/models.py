@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -29,7 +31,12 @@ class Member(AbstractBaseUser):
     organisation = models.ForeignKey(Organisation, related_name='members', on_delete=models.CASCADE, null=False, blank=False)
     rule = models.ForeignKey(Role, on_delete=models.CASCADE, null=False, blank=False)
     logo = models.ImageField(upload_to='photos/', default='default_logo.png')
+    logo_name = models.CharField(max_length=255, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.logo:
+            self.logo_name = os.path.basename(self.logo.name)
+        super().save(*args, **kwargs)
     objects = MemberManager()
 
     USERNAME_FIELD = 'email'
@@ -44,3 +51,4 @@ class Member(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
