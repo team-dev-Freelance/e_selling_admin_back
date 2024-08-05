@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'client',
     'categorie',
     'acheter',
-    'corsheaders'
+    'corsheaders',
 ]
 
 # MIDDLEWARE = [
