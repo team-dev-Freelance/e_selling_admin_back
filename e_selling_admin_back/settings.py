@@ -19,8 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 BASE_DIR_MEDIA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR_MEDIA, 'media')
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR_MEDIA, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
