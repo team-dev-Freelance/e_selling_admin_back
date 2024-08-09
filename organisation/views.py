@@ -101,7 +101,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_organisations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Desactiver une organisation: organisation/{id}/deactiver
+    # Desactiver une organisation: organisation/{id}/deactivate/
     @action(detail=True, methods=['post'], url_path='deactivate')
     def deactivate_org(self, request, pk=None):
         organisation = self.get_object()
@@ -112,7 +112,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         else:
             return Response({'status': 'organisation already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Liste des articles d'une organisation: organisation/{id}/list_articles
+    # Liste des articles d'une organisation: organisation/{id}/list_articles/
     @action(detail=True, methods=['get'])
     def list_articles(self, request, pk=None):
         try:
