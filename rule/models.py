@@ -34,6 +34,8 @@ class Role(models.Model):
             privileges_list.extend([add_privilege, find_privileges])
         if role == Rule.USER:
             privileges_list.append(all_privilege)
+        if role == Rule.CLIENT:
+            privileges_list.append(find_privileges)
         return privileges_list
 
     def __str__(self):
