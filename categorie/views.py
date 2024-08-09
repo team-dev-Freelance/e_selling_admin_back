@@ -7,6 +7,7 @@ from rest_framework import status
 
 from article.models import Article
 from article.serializers import ArticleSerializer
+from permissions import IsMemberOrUser, IsCreatorOrReadOnly
 from .models import Categorie
 from .serializers import CategorieSerializer
 
@@ -14,6 +15,13 @@ from .serializers import CategorieSerializer
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categorie.objects.all()
     serializer_class = CategorieSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'list', 'partial_update', 'retrieve', 'update', 'list_active_categories', 'deactivate_cat']:
+            self.permission_classes = [IsMemberOrUser]
+        elif self.action in ['list_articles', 'list_articles_actif']:
+            self.permission_classes = [IsCreatorOrReadOnly]
+        return super().get_permissions()
 
     # Liste des categories: categorie/
     def list(self, request):

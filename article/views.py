@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 
-from member.models import Member
+# from member.models import Member
+from permissions import IsUser, IsMemberOrUser, IsAdmin, IsCreatorOrReadOnly, IsOwnerOrReadOnly
 from .models import Article
 from .serializers import ArticleSerializer
 from django.shortcuts import render, redirect
@@ -13,6 +14,17 @@ from rest_framework import status
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            self.permission_classes = [IsMemberOrUser]
+        elif self.action in ['partial_update', 'deactivate_art', 'list_articles_member', 'retrieve', 'update', 'list_articles_actifs_user']:
+            self.permission_classes = [IsCreatorOrReadOnly]
+        elif self.action in ['list', 'list_active_articles']:
+            self.permission_classes = [IsAdmin]
+        elif self.action in ['list_active_articles']:
+            self.permission_classes = [IsOwnerOrReadOnly]
+        return super().get_permissions()
 
     # Liste des arcticles: article/
     def list(self, request):

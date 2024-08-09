@@ -1,5 +1,17 @@
 from rest_framework import serializers
-from .models import Member
+
+# from .models import Member
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from utilisateur.models import Member
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Ajouter des données personnalisées au token si nécessaire
+        return token
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -9,6 +21,7 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         # fields = ['email', 'name', 'phone', 'organisation', 'rule']  # Champs spécifiques
         exclude = ['active']
+
     # def get_full_name(self, obj):
     #     return f"{obj.name}"  # Exemple de champ personnalisé, ici on retourne simplement le nom
 
@@ -18,4 +31,5 @@ class MemberSerializer(serializers.ModelSerializer):
         if len(value) != 9 or not value.isdigit():
             raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
         return value
+
 

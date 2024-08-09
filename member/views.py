@@ -1,19 +1,30 @@
 from rest_framework import viewsets
 
-from article.models import Article
-from organisation.models import Organisation
-from privilegies.models import Privilegies, Privilege
-from rule.models import Rule
-from .models import Member
+from permissions import IsAdminOrUser, IsUser
+from utilisateur.models import Member
+
+# from .models import Member
 from .serializers import MemberSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'partial_update', 'deactivate_user', 'list', 'list_active_members', 'retrieve',
+                           'update']:
+            self.permission_classes = [IsAdminOrUser]
+        return super().get_permissions()
 
     #Dessactiver un membre
     @action(detail=True, methods=['post'], url_path='deactivate')
@@ -39,20 +50,27 @@ class MemberViewSet(viewsets.ModelViewSet):
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
-    # Creation d'une member: member/
+    def create(self, request):
+        serializer = MemberSerializer(data=request.data)
+        if serializer.is_valid():
+            member = Member(
+                username=serializer.validated_data['username'],
+                email=serializer.validated_data['email'],
+                phone=serializer.validated_data['phone'],
+                rule=serializer.validated_data['rule'],
+                organisation=serializer.validated_data['organisation'],
+            )
+            member.set_password(serializer.validated_data['password'])
+            member.save()
+            return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     # def create(self, request):
     #     serializer = MemberSerializer(data=request.data)
     #     if serializer.is_valid():
     #         serializer.save()
     #         return Response(serializer.data, status=status.HTTP_201_CREATED)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def create(self, request):
-        serializer = MemberSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Un membre par son id: member/{id}/
     def retrieve(self, request, pk=None):
@@ -86,4 +104,3 @@ class MemberViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

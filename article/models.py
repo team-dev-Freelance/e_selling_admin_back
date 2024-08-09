@@ -2,7 +2,10 @@ import os
 
 from django.db import models
 from categorie.models import Categorie
-from member.models import Member
+from utilisateur.models import Member
+
+
+# from member.models import Member
 
 
 class Article(models.Model):

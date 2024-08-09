@@ -1,8 +1,10 @@
 from rest_framework import viewsets
-from .models import Client
+
+from permissions import IsOwnerOrReadOnly
+from rule.models import Role
+from utilisateur.models import Client
+# from .models import Client
 from .serializers import ClientSerializer
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,18 +14,40 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
+    def get_permissions(self):
+        if self.action in ['retrieve', 'update', 'deactivate_client', 'partial_update']:
+            self.permission_classes = [IsOwnerOrReadOnly]
+        return super().get_permissions()
+
     # Liste des clients: client/
     def list(self, request):
         clients = Client.objects.all().distinct()
         serializer = ClientSerializer(clients, many=True)
         return Response(serializer.data)
 
-    # Creation d'un client: client/
     def create(self, request):
         serializer = ClientSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Récupérer les données validées
+            name = serializer.validated_data['name']
+            email = serializer.validated_data['email']
+            phone = serializer.validated_data['phone']
+            password = serializer.validated_data['password']
+
+            # Vérifier ou créer le rôle par défaut pour le client
+            role, created = Role.objects.get_or_create(role='CLIENT')
+
+            # Créer l'objet Client
+            client = Client(
+                name=name,
+                email=email,
+                phone=phone,
+                rule=role,  # Assigner le rôle au client
+            )
+            client.set_password(password)
+            client.save()
+
+            return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Un client par son id: client/{id}/

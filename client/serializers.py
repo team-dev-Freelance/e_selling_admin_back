@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import Client
+
+from utilisateur.models import Client
+
+
+# from .models import Client
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -8,14 +12,14 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         # fields = ['email', 'name', 'phone', 'articles', 'logo']  # Liste des champs à inclure dans le sérialiseur
-        exclude = ['active']
+        exclude = ['active', 'rule']
 
     def validate_phone(self, value):
         """
         Validation personnalisée pour le champ `phone`.
         """
-        if not value.startswith(('62', '65', '67', '68', '69')):
-            raise serializers.ValidationError('Le numéro doit commencer par 62, 65, 67, 68 ou 69.')
+        if not value.startswith(('65', '67', '68', '69')):
+            raise serializers.ValidationError('Le numéro doit commencer par 65, 67, 68 ou 69.')
         if len(value) != 9 or not value.isdigit():
             raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
         return value

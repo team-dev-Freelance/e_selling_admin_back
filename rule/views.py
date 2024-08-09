@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 
+from permissions import IsAdmin, IsAdminOrUser
 from privilegies.models import Privilegies, Privilege
 from .models import Role, Rule
 from .serializers import RoleSerializer
@@ -13,6 +14,13 @@ from rest_framework import status
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'partial_update', 'retrieve', 'update']:
+            self.permission_classes = [IsAdminOrUser]
+        elif self.action in ['list']:
+            self.permission_classes = [IsAdminOrUser]
+        return super().get_permissions()
 
     # @action(detail=False, methods=['post'], url_path='add')
     # def ajouter(self, request):

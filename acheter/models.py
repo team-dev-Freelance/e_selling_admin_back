@@ -1,6 +1,9 @@
 from django.db import models
 from article.models import Article
-from client.models import Client
+from utilisateur.models import Client
+
+
+# from client.models import Client
 
 
 # Create your models here.

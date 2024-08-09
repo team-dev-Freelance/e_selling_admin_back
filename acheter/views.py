@@ -10,8 +10,11 @@ from rest_framework import status
 
 from article.models import Article
 from article.serializers import ArticleSerializer
-from member.models import Member
+# from client.models import Client
+# from member.models import Member
 from organisation.models import Organisation
+from permissions import IsOwnerOrReadOnly
+from utilisateur.models import Client, Member
 
 
 # Create your views here.
@@ -19,6 +22,12 @@ from organisation.models import Organisation
 class AcheterViewSet(viewsets.ModelViewSet):
     queryset = Acheter.objects.all()
     serializer_class = AcheterSerializer
+
+    # def get_permissions(self):
+    #     if self.action in ['create', 'list_active_acheter_client']:
+    #         self.permission_classes = [IsOwnerOrReadOnly]
+    #     elif self.action in ['', 'list_active_acheter_client']:
+    #     return super().get_permissions()
 
     # Liste des achats: acheter/
     def list(self, request):
@@ -79,6 +88,18 @@ class AcheterViewSet(viewsets.ModelViewSet):
         # articles = organisation.articles.all()  # Obtenir tous les articles de l'organisation
         articles = Article.objects.filter(active=True, member__in=members).distinct()
         acheter_list = Acheter.objects.filter(active=True, article__in=articles).distinct()
+        serializer = AcheterSerializer(acheter_list, many=True)
+        return Response(serializer.data)
+
+    # Liste des achats actives d'un client: acheter/list_active_acheter_client/client/{id}/
+    @action(detail=False, methods=['get'], url_path='list_active_acheter_client/client/(?P<client_id>[^/.]+)')
+    def list_active_acheter_client(self, request, client_id=None):
+        try:
+            client = Client.objects.get(pk=client_id)
+        except client.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        acheter_list = Acheter.objects.filter(active=True, client_id=client_id).distinct()
         serializer = AcheterSerializer(acheter_list, many=True)
         return Response(serializer.data)
 
