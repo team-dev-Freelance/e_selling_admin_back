@@ -81,11 +81,12 @@ class User(AbstractBaseUser):
         return self.email
 
 
-class Client(User):
-    db_table = 'client'
+# class Client(User):
+#     db_table = 'client'
 
 
 class Member(User):
+    db_table = 'member'
     organisation = models.ForeignKey('organisation.Organisation', related_name='members', on_delete=models.CASCADE,
                                      null=True, blank=False)
 
