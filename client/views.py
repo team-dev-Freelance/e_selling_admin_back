@@ -29,7 +29,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         serializer = ClientSerializer(data=request.data)
         if serializer.is_valid():
             # Récupérer les données validées
-            name = serializer.validated_data['name']
+            username = serializer.validated_data['username']
             email = serializer.validated_data['email']
             phone = serializer.validated_data['phone']
             password = serializer.validated_data['password']
@@ -39,7 +39,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
             # Créer l'objet Client
             client = Client(
-                name=name,
+                username=username,
                 email=email,
                 phone=phone,
                 rule=role,  # Assigner le rôle au client
