@@ -20,7 +20,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsMemberOrUser]
         elif self.action in ['partial_update', 'deactivate_art', 'list_articles_member', 'retrieve', 'update', 'list_articles_actifs_user']:
             self.permission_classes = [IsCreatorOrReadOnly]
-        elif self.action in ['list', 'list_active_articles']:
+        elif self.action in ['list']:
             self.permission_classes = [IsAdmin]
         elif self.action in ['list_active_articles']:
             self.permission_classes = [IsOwnerOrReadOnly]
