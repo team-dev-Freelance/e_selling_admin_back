@@ -12,10 +12,11 @@ from article.views import ArticleViewSet
 from categorie.views import CategoriesViewSet
 from client.views import ClientViewSet
 from e_selling_admin_back import settings
-from member.views import MemberViewSet, MyTokenObtainPairView
+from member.views import MemberViewSet
 from organisation.views import OrganisationViewSet
 from privilegies.views import PrivilegiesViewSet
 from rule.views import RoleViewSet
+from utilisateur.views import MyTokenObtainPairView
 
 router = DefaultRouter()
 router.register(r'member', MemberViewSet)
@@ -35,6 +36,9 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
+# Ajoutez les configurations pour les fichiers médias si en mode développement
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 

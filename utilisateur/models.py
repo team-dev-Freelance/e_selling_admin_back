@@ -3,7 +3,6 @@ import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-from organisation.models import Organisation
 from privilegies.models import Privilegies, Privilege
 from rule.models import Role
 
@@ -20,7 +19,6 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         # Assurez-vous que l'instance Privilegies pour 'ALL' existe
         all_privilege, created = Privilegies.objects.get_or_create(privilege=Privilege.ALL)
 
@@ -34,19 +32,10 @@ class UserManager(BaseUserManager):
                 role.privileges.set([all_privilege])
                 role.save()
             extra_fields['rule'] = role
-
-        # if 'organisation' not in extra_fields:
-        #     # Créez ou obtenez l'objet Organisation
-        #     organisation, created = Organisation.objects.get_or_create(
-        #         label='Organisation',
-        #         defaults={'active': False}
-        #     )
-        #     extra_fields['organisation'] = organisation
-
         return self.create_user(username, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class Utilisateur(AbstractBaseUser):
     email = models.EmailField(unique=True)
     username = models.CharField(unique=True, max_length=255)
     phone = models.CharField(max_length=20, default='')
@@ -63,7 +52,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = ['email']
 
     class Meta:
-        abstract = True
+        abstract = False  # Rend cette classe abstraite
 
     def save(self, *args, **kwargs):
         if self.logo:
@@ -81,12 +70,14 @@ class User(AbstractBaseUser):
         return self.email
 
 
-class Client(User):
-    db_table = 'client'
+class Client(Utilisateur):
+    class Meta:
+        db_table = 'client'
 
 
-class Member(User):
-    # db_table = 'member'
+class Member(Utilisateur):
     organisation = models.ForeignKey('organisation.Organisation', related_name='members', on_delete=models.CASCADE,
                                      null=True, blank=False)
 
+    class Meta:
+        db_table = 'member'

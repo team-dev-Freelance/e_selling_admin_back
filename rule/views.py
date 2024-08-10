@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from permissions import IsAdmin, IsAdminOrUser
+from permissions import IsAdmin, IsAdminOrUser, IsUser
 from privilegies.models import Privilegies, Privilege
 from .models import Role, Rule
 from .serializers import RoleSerializer
@@ -16,28 +16,18 @@ class RoleViewSet(viewsets.ModelViewSet):
     serializer_class = RoleSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'partial_update', 'retrieve', 'update']:
-            self.permission_classes = [IsAdminOrUser]
-        elif self.action in ['list']:
+        if self.action in ['list', 'create', 'partial_update', 'retrieve', 'update']:
+            self.permission_classes = [IsAdmin]
+        elif self.action in ['list_except_admin']:
+            self.permission_classes = [IsUser]
+        elif self.action in ['partial_update', 'update']:
             self.permission_classes = [IsAdminOrUser]
         return super().get_permissions()
 
-    # @action(detail=False, methods=['post'], url_path='add')
-    # def ajouter(self, request):
-    #     serializer = RoleSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         role = serializer.save()
-    #         add_privilege = Privilegies.objects.get_or_create(privilege=Privilege.ADD)[0]
-    #         find_privileges = Privilegies.objects.get_or_create(privilege=Privilege.FIND)[0]
-    #         all_privilege = Privilegies.objects.get_or_create(privilege=Privilege.ALL)[0]
-    #
-    #         if role in [Rule.ADMIN, Rule.MEMBER]:
-    #
-    #             role.privileges.add(add_privilege, find_privileges)
-    #             if role == Rule.USER:
-    #                 role.privileges.add(all_privilege)
-    #
-    #         role.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # Liste des roles a l'exception de admin: rule/except_admin/
+    @action(detail=False, methods=['get'], url_path='except_admin')
+    def list_except_admin(self, request):
+        roles = Role.objects.filter(active=True).exclude(role=Rule.ADMIN)
+        serializer = self.get_serializer(roles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 

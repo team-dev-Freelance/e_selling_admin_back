@@ -25,7 +25,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # settings.py
-AUTH_USER_MODEL = 'utilisateur.Client'
+AUTH_USER_MODEL = 'utilisateur.Utilisateur'
 
 
 # Quick-start development settings - unsuitable for production
@@ -105,9 +105,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
         'USER': os.environ.get('MYSQL_USER', 'root'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'rWeAHLhiyGNdfVGBOkYjYRbRvDMRSiBf'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'DZldFrYNLmcUJuCcCeziRVmsSFsODDEt'),
         'HOST': os.environ.get('MYSQL_HOST', 'viaduct.proxy.rlwy.net'),
-        'PORT': os.environ.get('MYSQL_PORT', '45168'),
+        'PORT': os.environ.get('MYSQL_PORT', '29245'),
     }
 }
 

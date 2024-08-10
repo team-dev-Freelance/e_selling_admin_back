@@ -8,13 +8,13 @@ from .serializers import MemberSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import MyTokenObtainPairSerializer
+# from rest_framework_simplejwt.views import TokenObtainPairView
+# from .serializers import MyTokenObtainPairSerializer
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
+# class MyTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = MyTokenObtainPairSerializer
+#
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
