@@ -19,7 +19,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class LogoutView(APIView):
 
-    def logout(self, request):
+    def post(self, request):
         user = request.user
         user.status = False
         user.save()
