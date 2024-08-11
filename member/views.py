@@ -35,7 +35,9 @@ class MemberViewSet(viewsets.ModelViewSet):
             user.save()
             return Response({'status': 'user deactivated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'user already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            user.active = True
+            user.save()
+            return Response({'status': 'user activated'}, status=status.HTTP_200_OK)
 
     # Liste des membres: member/
     def list(self, request):

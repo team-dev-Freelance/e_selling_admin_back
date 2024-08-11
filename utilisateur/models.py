@@ -43,6 +43,7 @@ class Utilisateur(AbstractBaseUser):
     rule = models.ForeignKey('rule.Role', on_delete=models.CASCADE, null=False, blank=False)
     logo = models.ImageField(upload_to='photos/', default='default_logo.png')
     logo_name = models.CharField(max_length=255, blank=True)
+    status = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 

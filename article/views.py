@@ -89,7 +89,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
             article.save()
             return Response({'status': 'article deactivated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'article already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            article.active = True
+            article.save()
+            return Response({'status': 'article activated'}, status=status.HTTP_200_OK)
 
     # Liste des articles publies par un utilisateur: article/list_articles/member/{id}/
     @action(detail=False, methods=['get'], url_path='list_articles/member/(?P<member_id>[^/.]+)')

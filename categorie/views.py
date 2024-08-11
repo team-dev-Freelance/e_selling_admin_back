@@ -86,7 +86,9 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             categorie.save()
             return Response({'status': 'categorie deactivated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'categorie already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            categorie.active = True
+            categorie.save()
+            return Response({'status': 'categorie activated'}, status=status.HTTP_200_OK)
 
     # Liste des articles d'une categorie: categorie/{id}/list_articles/
     @action(detail=True, methods=['get'])

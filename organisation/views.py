@@ -108,7 +108,9 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             organisation.save()
             return Response({'status': 'organisation deactivated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'organisation already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            organisation.active = True
+            organisation.save()
+            return Response({'status': 'organisation activated'}, status=status.HTTP_200_OK)
 
     # Liste des articles d'une organisation: organisation/{id}/list_articles/
     @action(detail=True, methods=['get'])
@@ -119,7 +121,6 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             return Response({"error": "Organisation not found."}, status=404)
 
         members = organisation.members.all().distinct()
-        #articles = organisation.articles.all()  # Obtenir tous les articles de l'organisation
         articles = Article.objects.filter(member__in=members).distinct()
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data)

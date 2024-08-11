@@ -99,5 +99,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             client.save()
             return Response({'status': 'client deactivated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'client already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            client.active = True
+            client.save()
+            return Response({'status': 'client activated'}, status=status.HTTP_200_OK)
 
