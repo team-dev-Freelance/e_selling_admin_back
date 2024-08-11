@@ -32,7 +32,7 @@ router.register(r'acheter', AcheterViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('logout/', LogoutView.as_view(), name='logout'),
