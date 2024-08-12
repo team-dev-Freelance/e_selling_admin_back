@@ -7,8 +7,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from acheter.views import AcheterViewSet
+# from acheter.views import AcheterViewSet
 from article.views import ArticleViewSet
+from cart.views import CartViewSet
+# from cart.views import CartViewSet
+# from cart.views import CartView
+# from cart.views import CartDetailView
 from categorie.views import CategoriesViewSet
 from client.views import ClientViewSet
 from e_selling_admin_back import settings
@@ -26,7 +30,8 @@ router.register(r'privilegies', PrivilegiesViewSet)
 router.register(r'article', ArticleViewSet)
 router.register(r'client', ClientViewSet)
 router.register(r'categorie', CategoriesViewSet)
-router.register(r'acheter', AcheterViewSet)
+# router.register(r'acheter', AcheterViewSet)
+router.register('cart', CartViewSet)
 
 
 urlpatterns = [
