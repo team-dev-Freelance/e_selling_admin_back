@@ -20,11 +20,11 @@ class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
 
-    def get_permissions(self):
-        if self.action in ['create', 'partial_update', 'deactivate_user', 'list', 'list_active_members', 'retrieve',
-                           'update']:
-            self.permission_classes = [IsAdminOrUser]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['create', 'partial_update', 'deactivate_user', 'list', 'list_active_members', 'retrieve',
+    #                        'update']:
+    #         self.permission_classes = [IsAdminOrUser]
+    #     return super().get_permissions()
 
     #Dessactiver un membre
     @action(detail=True, methods=['post'], url_path='deactivate')

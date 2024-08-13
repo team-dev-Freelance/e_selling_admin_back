@@ -14,10 +14,10 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
-    def get_permissions(self):
-        if self.action in ['retrieve', 'update', 'deactivate_client', 'partial_update']:
-            self.permission_classes = [IsOwnerOrReadOnly]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['retrieve', 'update', 'deactivate_client', 'partial_update']:
+    #         self.permission_classes = [IsOwnerOrReadOnly]
+    #     return super().get_permissions()
 
     # Liste des clients: client/
     def list(self, request):

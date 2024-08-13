@@ -15,14 +15,14 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
 
-    def get_permissions(self):
-        if self.action in ['list', 'create', 'partial_update', 'retrieve', 'update']:
-            self.permission_classes = [IsAdmin]
-        elif self.action in ['list_except_admin']:
-            self.permission_classes = [IsUser]
-        elif self.action in ['partial_update', 'update']:
-            self.permission_classes = [IsAdminOrUser]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['list', 'create', 'partial_update', 'retrieve', 'update']:
+    #         self.permission_classes = [IsAdmin]
+    #     elif self.action in ['list_except_admin']:
+    #         self.permission_classes = [IsUser]
+    #     elif self.action in ['partial_update', 'update']:
+    #         self.permission_classes = [IsAdminOrUser]
+    #     return super().get_permissions()
 
     # Liste des roles a l'exception de admin: rule/except_admin/
     @action(detail=False, methods=['get'], url_path='except_admin')

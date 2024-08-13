@@ -16,12 +16,12 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categorie.objects.all()
     serializer_class = CategorieSerializer
 
-    def get_permissions(self):
-        if self.action in ['create', 'list', 'partial_update', 'retrieve', 'update', 'list_active_categories', 'deactivate_cat']:
-            self.permission_classes = [IsMemberOrUser]
-        elif self.action in ['list_articles']:
-            self.permission_classes = [IsCreatorOrReadOnly]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['create', 'list', 'partial_update', 'retrieve', 'update', 'list_active_categories', 'deactivate_cat']:
+    #         self.permission_classes = [IsMemberOrUser]
+    #     elif self.action in ['list_articles']:
+    #         self.permission_classes = [IsCreatorOrReadOnly]
+    #     return super().get_permissions()
 
     # Liste des categories: categorie/
     def list(self, request):

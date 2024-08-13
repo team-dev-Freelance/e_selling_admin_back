@@ -18,16 +18,16 @@ class OrganisationViewSet(viewsets.ModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
 
-    def get_permissions(self):
-        if self.action in ['partial_update', 'retrieve', 'update', 'list_members', 'deactivate_org', 'list_members_active']:
-            self.permission_classes = [IsAdmin]
-        elif self.action in ['list_articles', 'list_articles_by_category']:
-            self.permission_classes = [IsMemberOfOrganisation]
-        elif self.action in ['list', 'create', 'retrieve', 'list_active_organisations']:
-            self.permission_classes = [IsAdmin]
-        elif self.action in ['list_active_organisation', 'list_articles_by_category']:
-            self.permission_classes = [IsUser]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['partial_update', 'retrieve', 'update', 'list_members', 'deactivate_org', 'list_members_active']:
+    #         self.permission_classes = [IsAdmin]
+    #     elif self.action in ['list_articles', 'list_articles_by_category']:
+    #         self.permission_classes = [IsMemberOfOrganisation]
+    #     elif self.action in ['list', 'create', 'retrieve', 'list_active_organisations']:
+    #         self.permission_classes = [IsAdmin]
+    #     elif self.action in ['list_active_organisation', 'list_articles_by_category']:
+    #         self.permission_classes = [IsUser]
+    #     return super().get_permissions()
 
     # Liste des organisations: organisation/
     def list(self, request):
