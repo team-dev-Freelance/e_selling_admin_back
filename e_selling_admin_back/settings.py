@@ -37,9 +37,12 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://localhost:4200', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'esellingadminback-production.up.railway.app']
 CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
-# CSRF_TRUSTED_ORIGINS = ['https://esellingadminback-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4200', 'https://esellingadminback-production.up.railway.app']
+
+# CORS_ALLOW_HEADERS = ['content-type', 'authorization']
+# CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 APPEND_SLASH = False
 
@@ -136,6 +139,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
 ]
 
 # SIMPLE_JWT = {
