@@ -67,13 +67,13 @@ class MemberViewSet(viewsets.ModelViewSet):
                 organisation=serializer.validated_data.pop('organisation_id')
             )
             user = self.request.user
-            # send_mail(
-            #     'Votre nouveau compte',
-            #     f'Bonjour {member.username},\nVotre mot de passe est : {password}',
-            #     user.email,
-            #     [member.email],
-            #     fail_silently=False,
-            # )
+            send_mail(
+                'Votre nouveau compte',
+                f'Bonjour {member.username},\nVotre mot de passe est : {password}',
+                user.email,
+                [member.email],
+                fail_silently=False,
+            )
             member.set_password(password)
             member.save()
             return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
