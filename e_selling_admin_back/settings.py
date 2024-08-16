@@ -27,6 +27,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # settings.py
 AUTH_USER_MODEL = 'utilisateur.Utilisateur'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'koirangaalioum@gmail.com'
+EMAIL_HOST_PASSWORD = 'wawou2012'
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -37,9 +45,10 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'esellingadminback-production.up.railway.app']
+ALLOWED_HOSTS = ['192.168.43.174', 'localhost', '127.0.0.1', 'esellingadminback-production.up.railway.app']
 CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:4200', 'https://esellingadminback-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['http://192.168.43.174:8000', 'http://localhost:4200', 'http://esellingadminback-production.up.railway.app']
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # CORS_ALLOW_HEADERS = ['content-type', 'authorization']
 # CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
@@ -70,8 +79,6 @@ INSTALLED_APPS = [
     'utilisateur',
     'corsheaders',
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'e_selling_admin_back.urls'
 
@@ -128,6 +135,7 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.permissions.AllowAny',
     ),
 }
 

@@ -32,14 +32,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data)
 
-    # Creation d'un article: article/
-    # def create(self, request):
-    #     serializer = ArticleSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data['member'] = request.user.id
@@ -104,17 +96,17 @@ class ArticleViewSet(viewsets.ModelViewSet):
             article.save()
             return Response({'status': 'article activated'}, status=status.HTTP_200_OK)
 
-    # Liste des articles publies par un utilisateur: article/list_articles/member/{id}/
-    @action(detail=False, methods=['get'], url_path='list_articles/member/(?P<member_id>[^/.]+)')
-    def list_articles_member(self, request, member_id=None):
-        articles = Article.objects.filter(member_id=member_id).distinct()
+    # Liste des articles publies par un utilisateur: article/list_articles/bymember/
+    @action(detail=False, methods=['get'], url_path='list_articles/bymember')
+    def list_articles_member(self, request):
+        articles = Article.objects.filter(member_id=request.user.id).distinct()
         serializer = self.get_serializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Liste des articles actifs publies par un utilisateur: article/list_actifs_articles/member/{id}/
-    @action(detail=False, methods=['get'], url_path='list_actifs_articles/member/(?P<member_id>[^/.]+)')
-    def list_articles_actifs_user(self, request, member_id=None):
-        articles = Article.objects.filter(member_id=member_id, active=True).distinct()
+    # Liste des articles actifs publies par un utilisateur: article/list_actifs_articles/bymember/
+    @action(detail=False, methods=['get'], url_path='list_actifs_articles/bymember')
+    def list_articles_actifs_user(self, request):
+        articles = Article.objects.filter(member_id=request.user.id, active=True).distinct()
         serializer = self.get_serializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

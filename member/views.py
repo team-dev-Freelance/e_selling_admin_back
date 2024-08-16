@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
 from rest_framework import viewsets
 
 from permissions import IsAdminOrUser, IsUser
@@ -55,14 +57,24 @@ class MemberViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():
+            password = get_random_string(length=12)
+
             member = Member(
                 username=serializer.validated_data['username'],
                 email=serializer.validated_data['email'],
                 phone=serializer.validated_data['phone'],
-                rule=serializer.validated_data['rule'],
-                organisation=serializer.validated_data['organisation'],
+                rule=serializer.validated_data.pop('rule_id'),
+                organisation=serializer.validated_data.pop('organisation_id')
             )
-            member.set_password(serializer.validated_data['password'])
+            user = self.request.user
+            # send_mail(
+            #     'Votre nouveau compte',
+            #     f'Bonjour {member.username},\nVotre mot de passe est : {password}',
+            #     user.email,
+            #     [member.email],
+            #     fail_silently=False,
+            # )
+            member.set_password(password)
             member.save()
             return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

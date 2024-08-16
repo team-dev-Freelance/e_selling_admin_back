@@ -76,21 +76,49 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Liste des membres d'une organisation: organisation/{id}/list_members/
-    @action(detail=True, methods=['get'], url_path='list_members')
-    def list_members(self, request, pk=None):
-        organisation = self.get_object()
-        members = organisation.members.all().distinct()  # Assuming a related_name 'members'
-        serializer = MemberSerializer(members, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # Liste des membres d'une organisation: organisation/list_members/
+    @action(detail=False, methods=['get'], url_path='list_members')
+    def list_members(self, request):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.all().distinct()
+                    serializer = MemberSerializer(members, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
-    # Liste des membres active d'une organisation: organisation/{id}/list_members_active/
-    @action(detail=True, methods=['get'], url_path='list_members_active')
-    def list_members_active(self, request, pk=None):
-        organisation = self.get_object()
-        members = organisation.members.filter(active=True).distinct()
-        serializer = MemberSerializer(members, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # Liste des membres active d'une organisation: organisation/list_members_active/
+    @action(detail=False, methods=['get'], url_path='list_members_active')
+    def list_members_active(self, request):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.filter(active=True).distinct()
+                    serializer = MemberSerializer(members, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
     # Liste des organisations actives: organisation/list_active_organisations/
     @action(detail=False, methods=['get'])
@@ -112,73 +140,97 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             organisation.save()
             return Response({'status': 'organisation activated'}, status=status.HTTP_200_OK)
 
-    # Liste des articles d'une organisation: organisation/{id}/list_articles/
-    @action(detail=True, methods=['get'])
-    def list_articles(self, request, pk=None):
-        try:
-            organisation = Organisation.objects.get(pk=pk)
-        except Organisation.DoesNotExist:
-            return Response({"error": "Organisation not found."}, status=404)
+    # Liste des articles d'une organisation: organisation/list_articles/
+    @action(detail=False, methods=['get'])
+    def list_articles(self, request):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.all().distinct()
+                    articles = Article.objects.filter(member__in=members).distinct()
+                    serializer = ArticleSerializer(articles, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
-        members = organisation.members.all().distinct()
-        articles = Article.objects.filter(member__in=members).distinct()
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
+    # Liste des articles actifs d'une organisation: organisation/list_articles_actif/
+    @action(detail=False, methods=['get'])
+    def list_articles_actif(self, request):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.all().distinct()
+                    articles = Article.objects.filter(member__in=members, active=True).distinct()
+                    serializer = ArticleSerializer(articles, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
-    # Liste des articles actifs d'une organisation: organisation/{id}/list_articles_actif
-    @action(detail=True, methods=['get'])
-    def list_articles_actif(self, request, pk=None):
-        try:
-            organisation = Organisation.objects.get(pk=pk)
-        except Organisation.DoesNotExist:
-            return Response({"error": "Organisation not found."}, status=404)
-
-        members = organisation.members.all().distinct()
-        # articles = organisation.articles.all()  # Obtenir tous les articles de l'organisation
-        articles = Article.objects.filter(member__in=members, active=True).distinct()
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
-
-    # Liste des articles actifs d'une organisation et d'une categorie: organisation/{id}/article_actif/categorie/{id}/
-    @action(detail=True, methods=['get'], url_path='article_actif/categorie/(?P<category_id>[^/.]+)')
-    def list_active_articles_by_category(self, request, pk=None, category_id=None):
-        try:
-            organisation = Organisation.objects.get(pk=pk)
-        except Organisation.DoesNotExist:
-            return Response({"error": "Organisation not found."}, status=404)
-
-        # Obtenir tous les membres de l'organisation
-        members = organisation.members.all().distinct()
-
-        # Obtenir tous les articles actifs de la catégorie spécifiée gérés par les membres de l'organisation
-        articles = Article.objects.filter(
-            category_id=category_id,
-            active=True,
-            member__in=members
-        ).distinct()
-
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
+    # Liste des articles actifs d'une organisation et d'une categorie: organisation/article_actif/categorie/{id}/
+    @action(detail=False, methods=['get'], url_path='article_actif/categorie/(?P<category_id>[^/.]+)')
+    def list_active_articles_by_category(self, request, category_id=None):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.all().distinct()
+                    articles = Article.objects.filter(member__in=members, category_id=category_id, active=True).distinct()
+                    serializer = ArticleSerializer(articles, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
     # Liste des articles d'une organisation et d'une categorie: organisation/{id}/article/categorie/{id}/
-    @action(detail=True, methods=['get'], url_path='article/categorie/(?P<category_id>[^/.]+)')
-    def list_articles_by_category(self, request, pk=None, category_id=None):
-        try:
-            organisation = Organisation.objects.get(pk=pk)
-        except Organisation.DoesNotExist:
-            return Response({"error": "Organisation not found."}, status=404)
-
-        # Obtenir tous les membres de l'organisation
-        members = organisation.members.all().distinct()
-
-        # Obtenir tous les articles de la catégorie spécifiée gérés par les membres de l'organisation
-        articles = Article.objects.filter(
-            category_id=category_id,
-            member__in=members
-        ).distinct()
-
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
+    @action(detail=False, methods=['get'], url_path='article/categorie/(?P<category_id>[^/.]+)')
+    def list_articles_by_category(self, request, category_id=None):
+        user = request.user  # Récupère l'utilisateur courant
+        if hasattr(user, 'member'):  # Vérifie si l'utilisateur est un Member
+            member = user.member  # Convertit l'utilisateur en Member
+            try:
+                # Récupérer l'organisation associée au membre
+                organisation = member.organisation
+                if organisation:
+                    # Récupérer les membres associés à l'organisation
+                    members = organisation.members.all().distinct()
+                    articles = Article.objects.filter(member__in=members, category_id=category_id).distinct()
+                    serializer = ArticleSerializer(articles, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                                    status=status.HTTP_404_NOT_FOUND)
+            except Organisation.DoesNotExist:
+                return Response({"detail": "Organisation non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
     # Uploader un logo
     # def upload_logo(request):

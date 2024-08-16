@@ -11,8 +11,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
         """
         Validation personnalisée pour le champ `phone`.
         """
-        if not value.startswith(('62', '65', '67', '68', '69')):
-            raise serializers.ValidationError('Le numéro doit commencer par 62, 65, 67, 68 ou 69.')
+        if not value.startswith(('65', '67', '68', '69')):
+            raise serializers.ValidationError('Le numéro doit commencer par 65, 67, 68 ou 69.')
         if len(value) != 9 or not value.isdigit():
             raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
         return value
