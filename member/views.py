@@ -86,10 +86,11 @@ class MemberViewSet(viewsets.ModelViewSet):
     #         return Response(serializer.data, status=status.HTTP_201_CREATED)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Un membre par son id: member/{id}/
-    def retrieve(self, request, pk=None):
+    # Un membre par son id: member/profileMember/
+    @action(detail=False, methods=['get'], url_path='profileMember')
+    def profile(self, request):
         try:
-            member = Member.objects.get(pk=pk)
+            member = Member.objects.get(pk=request.user.id)
         except Member.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = MemberSerializer(member)

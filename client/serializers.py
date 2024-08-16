@@ -7,12 +7,10 @@ from utilisateur.models import Client
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    # Vous pouvez ajouter des champs personnalisés ici si nécessaire
-
     class Meta:
         model = Client
-        # fields = ['email', 'name', 'phone', 'articles', 'logo']  # Liste des champs à inclure dans le sérialiseur
-        exclude = ['active', 'rule']
+        # fields = ['label', 'price', 'category', 'member', 'logo']
+        exclude = ['active', 'is_staff', 'is_superuser', 'logo_name', 'password', 'last_login']
 
     def validate_phone(self, value):
         """

@@ -50,10 +50,11 @@ class ClientViewSet(viewsets.ModelViewSet):
             return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Un client par son id: client/{id}/
-    def retrieve(self, request, pk=None):
+    # Un client par son id: client/profileClient/
+    @action(detail=False, methods=['get'], url_path='profileClient')
+    def profile(self, request):
         try:
-            client = Client.objects.get(pk=pk)
+            client = Client.objects.get(pk=request.user.id)
         except Client.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ClientSerializer(client)
