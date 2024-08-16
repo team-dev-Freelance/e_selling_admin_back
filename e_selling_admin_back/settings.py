@@ -13,6 +13,38 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+
+# Configuration
+cloudinary.config(
+    cloud_name="doi8u5nki",
+    api_key="371996395793828",
+    api_secret="ensTEAUBn3duPLjDt13vifMxTB8",  # Click 'View API Keys' above to copy your API secret
+    secure=True
+)
+
+# # Upload an image
+# upload_result = cloudinary.uploader.upload("https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
+#                                            public_id="shoes")
+# print(upload_result["secure_url"])
+#
+# # Optimize delivery by resizing and applying auto-format and auto-quality
+# optimize_url, _ = cloudinary_url("shoes", fetch_format="auto", quality="auto")
+# print(optimize_url)
+#
+# # Transform the image: auto-crop to square aspect_ratio
+# auto_crop_url, _ = cloudinary_url("shoes", width=500, height=500, crop="auto", gravity="auto")
+# print(auto_crop_url)
+
+# CLOUDINARY_URL = 'cloudinary://371996395793828:ensTEAUBn3duPLjDt13vifMxTB8@doi8u5nki'
+# CLOUDINARY_URL = 'cloudinary://371996395793828:ensTEAUBn3duPLjDt13vifMxTB8@doi8u5nki'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,8 +66,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'wawouam@gmail.com'
 EMAIL_HOST_PASSWORD = 'npdd sdvc moaq ozal '
 
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -47,7 +77,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.43.174', 'localhost', '127.0.0.1', 'esellingadminback-production.up.railway.app']
 CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
-CSRF_TRUSTED_ORIGINS = ['http://192.168.43.174:8000', 'http://localhost:4200', 'http://esellingadminback-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['http://192.168.43.174:8000', 'http://localhost:4200',
+                        'http://esellingadminback-production.up.railway.app']
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # CORS_ALLOW_HEADERS = ['content-type', 'authorization']
@@ -169,7 +200,7 @@ MIDDLEWARE = [
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Par exemple, 60 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Par exemple, 1 jour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Par exemple, 1 jour
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,

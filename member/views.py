@@ -69,7 +69,8 @@ class MemberViewSet(viewsets.ModelViewSet):
             user = self.request.user
             send_mail(
                 'Votre nouveau compte',
-                f'Bonjour {member.username},\nVotre mot de passe est : {password}',
+                f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
+                f'Votre mot de passe est : {password}',
                 user.email,
                 [member.email],
                 fail_silently=False,

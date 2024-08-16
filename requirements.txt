@@ -24,3 +24,5 @@ gunicorn>=20.1.0
 mysqlclient
 django-cors-headers
 django-extensions
+cloudinary>=1.29.0
+
