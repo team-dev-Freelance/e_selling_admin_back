@@ -56,24 +56,6 @@ class MemberViewSet(viewsets.ModelViewSet):
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
-    action(detail=False, methods=['delete'], url_path='delete')
-    def delete_users(request):
-        ids = request.data.get('ids', [])
-
-        if not isinstance(ids, list):
-            ids = [ids]
-
-        try:
-            users = Member.objects.filter(id__in=ids)
-            if not users.exists():
-                return Response({"detail": "Aucun utilisateur trouvé avec les IDs fournis."},
-                                status=status.HTTP_404_NOT_FOUND)
-            users.delete()
-            return Response({"detail": f"Les utilisateurs avec les IDs {ids} ont été supprimés avec succès."},
-                            status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
     def create(self, request):
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():

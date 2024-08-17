@@ -23,23 +23,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
     action(detail=False, methods=['delete'], url_path='delete')
 
-    def delete_users(request):
-        ids = request.data.get('ids', [])
-
-        if not isinstance(ids, list):
-            ids = [ids]
-
-        try:
-            users = Utilisateur.objects.filter(id__in=ids)
-            if not users.exists():
-                return Response({"detail": "Aucun utilisateur trouvé avec les IDs fournis."},
-                                status=status.HTTP_404_NOT_FOUND)
-            users.delete()
-            return Response({"detail": f"Les utilisateurs avec les IDs {ids} ont été supprimés avec succès."},
-                            status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class LogoutView(APIView):
 
@@ -51,6 +34,22 @@ class LogoutView(APIView):
 
 
 User = get_user_model()
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.rule.role if hasattr(user, 'rule') else None,
+            "organisation_id": user.member.organisation.id if hasattr(user, 'member') else None,
+            "is_admin": user.is_staff,
+        }
+        return Response(user_data, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):

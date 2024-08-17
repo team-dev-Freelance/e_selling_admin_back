@@ -20,7 +20,7 @@ from member.views import MemberViewSet
 from organisation.views import OrganisationViewSet
 from privilegies.views import PrivilegiesViewSet
 from rule.views import RoleViewSet
-from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView
+from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView, CurrentUserView
 
 router = DefaultRouter()
 router.register(r'member', MemberViewSet)
@@ -42,6 +42,7 @@ urlpatterns = [
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
+    path('current-user/', CurrentUserView.as_view(), name='current_user'),
 ]
 
 # Ajoutez les configurations pour les fichiers médias si en mode développement
