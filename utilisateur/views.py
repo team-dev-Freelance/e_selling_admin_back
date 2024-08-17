@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status as drf_status, status
+
+from utilisateur.models import Utilisateur
 from utilisateur.serializers import MyTokenObtainPairSerializer
 
 
@@ -17,6 +20,25 @@ class MyTokenObtainPairView(TokenObtainPairView):
             user.status = True
             user.save()
         return response
+
+    action(detail=False, methods=['delete'], url_path='delete')
+
+    def delete_users(request):
+        ids = request.data.get('ids', [])
+
+        if not isinstance(ids, list):
+            ids = [ids]
+
+        try:
+            users = Utilisateur.objects.filter(id__in=ids)
+            if not users.exists():
+                return Response({"detail": "Aucun utilisateur trouvé avec les IDs fournis."},
+                                status=status.HTTP_404_NOT_FOUND)
+            users.delete()
+            return Response({"detail": f"Les utilisateurs avec les IDs {ids} ont été supprimés avec succès."},
+                            status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
