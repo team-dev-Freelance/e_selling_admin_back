@@ -1,5 +1,6 @@
 import os
 
+from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -41,8 +42,9 @@ class Utilisateur(AbstractBaseUser):
     phone = models.CharField(max_length=20, default='')
     active = models.BooleanField(default=True)
     rule = models.ForeignKey('rule.Role', on_delete=models.CASCADE, null=False, blank=False)
-    logo = models.ImageField(upload_to='photos/', default='default_logo.png')
-    logo_name = models.CharField(max_length=255, blank=True)
+    # logo = models.ImageField(upload_to='photos/', default='default_logo.png')
+    # logo_name = models.CharField(max_length=255, blank=True)
+    logo = CloudinaryField('image', default='media/photos/logo.jpeg')
     status = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -53,12 +55,12 @@ class Utilisateur(AbstractBaseUser):
     REQUIRED_FIELDS = ['email']
 
     class Meta:
-        abstract = False  # Rend cette classe abstraite
+        abstract = False
 
-    def save(self, *args, **kwargs):
-        if self.logo:
-            self.logo_name = os.path.basename(self.logo.name)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.logo:
+    #         self.logo_name = os.path.basename(self.logo.name)
+    #     super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()

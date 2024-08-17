@@ -85,8 +85,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     # Desactiver un article: article/{id}/deactivate/
     @action(detail=True, methods=['post'], url_path='deactivate')
-    def deactivate_art(self, request, pk=None):
-        article = self.get_object()
+    def deactivate_art(self, request):
+        article = request.data.copy()
+        # article = self.get_object()
         if article.active:
             article.active = False
             article.save()

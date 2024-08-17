@@ -17,7 +17,7 @@ class Article(models.Model):
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=False)
-    logo = CloudinaryField('image', default='default_logo.png')
+    logo = CloudinaryField('image', default='media/photos/logo.jpeg')
     # logo_name = models.CharField(max_length=255, blank=True)
 
     def __str__(self):

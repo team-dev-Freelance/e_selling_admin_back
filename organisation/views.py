@@ -129,8 +129,9 @@ class OrganisationViewSet(viewsets.ModelViewSet):
 
     # Desactiver une organisation: organisation/{id}/deactivate/
     @action(detail=True, methods=['post'], url_path='deactivate')
-    def deactivate_org(self, request, pk=None):
-        organisation = self.get_object()
+    def deactivate_org(self, request):
+        organisation = request.data.copy()
+        # organisation = self.get_object()
         if organisation.active:
             organisation.active = False
             organisation.save()
