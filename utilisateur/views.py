@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status as drf_status, status
 
+from organisation.serializers import OrganisationSerializer
 from utilisateur.models import Utilisateur
 from utilisateur.serializers import MyTokenObtainPairSerializer
 
@@ -41,12 +42,19 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         user = request.user
+        organisation_data = None
+
+        # Vérifiez si l'utilisateur est un Member et a une organisation
+        if hasattr(user, 'member'):
+            organisation = user.member.organisation
+            organisation_data = OrganisationSerializer(organisation).data
+
         user_data = {
             "id": user.id,
             "username": user.username,
             "email": user.email,
             "role": user.rule.role if hasattr(user, 'rule') else None,
-            "organisation_id": user.member.organisation.id if hasattr(user, 'member') else None,
+            "organisation": organisation_data,  # Incluez l'objet organisation ici
             "is_admin": user.is_staff,
         }
         return Response(user_data, status=status.HTTP_200_OK)
