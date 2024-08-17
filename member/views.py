@@ -59,31 +59,31 @@ class MemberViewSet(viewsets.ModelViewSet):
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
-    def create(self, request):
-        serializer = MemberSerializer(data=request.data)
-        if serializer.is_valid():
-            password = get_random_string(length=12)
-
-            member = Member(
-                username=serializer.validated_data['username'],
-                email=serializer.validated_data['email'],
-                phone=serializer.validated_data['phone'],
-                rule=serializer.validated_data.pop('rule_id'),
-                organisation=serializer.validated_data.pop('organisation_id')
-            )
-            user = self.request.user
-            send_mail(
-                'Votre nouveau compte',
-                f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
-                f'Votre mot de passe est : {password}',
-                user.email,
-                [member.email],
-                fail_silently=False,
-            )
-            member.set_password(password)
-            member.save()
-            return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def create(self, request):
+    #     serializer = MemberSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         password = get_random_string(length=12)
+    #
+    #         member = Member(
+    #             username=serializer.validated_data['username'],
+    #             email=serializer.validated_data['email'],
+    #             phone=serializer.validated_data['phone'],
+    #             rule=serializer.validated_data.pop('rule_id'),
+    #             organisation=serializer.validated_data.pop('organisation_id')
+    #         )
+    #         user = self.request.user
+    #         send_mail(
+    #             'Votre nouveau compte',
+    #             f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
+    #             f'Votre mot de passe est : {password}',
+    #             user.email,
+    #             [member.email],
+    #             fail_silently=False,
+    #         )
+    #         member.set_password(password)
+    #         member.save()
+    #         return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
         serializer = MemberSerializer(data=request.data)
