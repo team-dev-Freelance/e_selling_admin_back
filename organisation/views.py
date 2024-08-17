@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -130,8 +130,8 @@ class OrganisationViewSet(viewsets.ModelViewSet):
     # Desactiver une organisation: organisation/{id}/deactivate/
     @action(detail=False, methods=['post'], url_path='deactivate')
     def deactivate_org(self, request):
-        organisation = request.data.copy()
-        # organisation = self.get_object()
+        organisation_id = request.data.get('id')
+        organisation = get_object_or_404(Organisation, id=organisation_id)
         if organisation.active:
             organisation.active = False
             organisation.save()
