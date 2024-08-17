@@ -116,7 +116,9 @@ class MemberViewSet(viewsets.ModelViewSet):
                 email=serializer.validated_data['email'],
                 phone=serializer.validated_data['phone'],
                 rule=member_role,
-                organisation=organisation
+                organisation=organisation,
+                organisation_id=organisation.id,
+                rule_id=member_role.id
             )
             member.set_password(password)
             member.save()
