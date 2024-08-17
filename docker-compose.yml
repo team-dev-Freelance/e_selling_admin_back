@@ -40,7 +40,7 @@ services:
       - "8000:8000"
     environment:
 #      - DATABASE_URL=mysql://root:ewxveSjrgbwpLaZJnPHAkanABWvcUasO@mysql.railway.internal/railway
-      - DATABASE_URL=mysql://root:DZldFrYNLmcUJuCcCeziRVmsSFsODDEt@viaduct.proxy.rlwy.net:29245/railway
+      - DATABASE_URL=mysql://root:tgQUJPXWBMVFaIruXELIAEnZYNtNwWlC@junction.proxy.rlwy.net:47800/railway
     depends_on:
       - db
 
