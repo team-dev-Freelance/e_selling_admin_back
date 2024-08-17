@@ -127,7 +127,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_organisations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Desactiver une organisation: organisation/{id}/deactivate/
+    # Desactiver une organisation: organisation/deactivate/
     @action(detail=False, methods=['post'], url_path='deactivate')
     def deactivate_org(self, request):
         organisation_id = request.data.get('id')

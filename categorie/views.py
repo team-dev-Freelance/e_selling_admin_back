@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -77,10 +77,11 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Desactiver une categorie: categorie/{id}/deactiver/
-    @action(detail=True, methods=['post'], url_path='deactivate')
-    def deactivate_cat(self, request, pk=None):
-        categorie = self.get_object()
+    # Desactiver une categorie: categorie/deactiver/
+    @action(detail=False, methods=['post'], url_path='deactivate')
+    def deactivate_cat(self, request):
+        categorie_id = request.data.get('id')
+        categorie = get_object_or_404(Categorie, id=categorie_id)
         if categorie.active:
             categorie.active = False
             categorie.save()

@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from rest_framework import viewsets
 
@@ -31,9 +32,10 @@ class MemberViewSet(viewsets.ModelViewSet):
     #     return super().get_permissions()
 
     #Dessactiver un membre
-    @action(detail=True, methods=['post'], url_path='deactivate')
-    def deactivate_user(self, request, pk=None):
-        user = self.get_object()
+    @action(detail=False, methods=['post'], url_path='deactivate')
+    def deactivate_user(self, request):
+        user_id = request.data.get('id')
+        user = get_object_or_404(Member, id=user_id)
         if user.active:
             user.active = False
             user.save()
@@ -81,6 +83,58 @@ class MemberViewSet(viewsets.ModelViewSet):
             member.save()
             return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request):
+        serializer = MemberSerializer(data=request.data)
+        if serializer.is_valid():
+            # Vérifier si le rôle du membre est "MEMBER"
+            role = serializer.validated_data.get('rule_id')
+            if role.name == 'MEMBER':
+                password = get_random_string(length=12)
+
+                member = Member(
+                    username=serializer.validated_data['username'],
+                    email=serializer.validated_data['email'],
+                    phone=serializer.validated_data['phone'],
+                    rule=role,
+                    organisation=request.user.organisation
+                    # Affecter automatiquement à l'organisation de l'utilisateur courant
+                )
+                user = self.request.user
+                send_mail(
+                    'Votre nouveau compte',
+                    f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
+                    f'Votre mot de passe est : {password}',
+                    user.email,
+                    [member.email],
+                    fail_silently=False,
+                )
+                member.set_password(password)
+                member.save()
+                return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
+
+            password = get_random_string(length=12)
+            member = Member(
+                username=serializer.validated_data['username'],
+                email=serializer.validated_data['email'],
+                phone=serializer.validated_data['phone'],
+                rule=serializer.validated_data.pop('rule_id'),
+                organisation=serializer.validated_data.pop('organisation_id')
+            )
+            user = self.request.user
+            send_mail(
+                'Votre nouveau compte',
+                f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
+                f'Votre mot de passe est : {password}',
+                user.email,
+                [member.email],
+                fail_silently=False,
+            )
+            member.set_password(password)
+            member.save()
+            return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     # def create(self, request):
     #     serializer = MemberSerializer(data=request.data)

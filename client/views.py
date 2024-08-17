@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 
 from permissions import IsOwnerOrReadOnly
@@ -91,10 +92,11 @@ class ClientViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_clients, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Desactiver un client: client/{id}/deactivate/
-    @action(detail=True, methods=['post'], url_path='deactivate')
-    def deactivate_client(self, request, pk=None):
-        client = self.get_object()
+    # Desactiver un client: client/deactivate/
+    @action(detail=False, methods=['post'], url_path='deactivate')
+    def deactivate_client(self, request):
+        client_id = request.data.get('id')
+        client = get_object_or_404(Client, id=client_id)
         if client.active:
             client.active = False
             client.save()

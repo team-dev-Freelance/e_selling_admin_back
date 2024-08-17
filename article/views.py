@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from permissions import IsUser, IsMemberOrUser, IsAdmin, IsCreatorOrReadOnly, IsOwnerOrReadOnly
 from .models import Article
 from .serializers import ArticleSerializer
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -83,10 +83,11 @@ class ArticleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Desactiver un article: article/{id}/deactivate/
-    @action(detail=True, methods=['post'], url_path='deactivate')
+    # Desactiver un article: article/deactivate/
+    @action(detail=False, methods=['post'], url_path='deactivate')
     def deactivate_art(self, request):
-        article = request.data.copy()
+        article_id = request.data.get('id')
+        article = get_object_or_404(Article, id=article_id)
         # article = self.get_object()
         if article.active:
             article.active = False
