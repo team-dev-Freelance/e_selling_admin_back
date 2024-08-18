@@ -86,25 +86,26 @@ class MemberViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
-        user_role = request.user.role.name
+        # Utilisez 'rule' au lieu de 'role'
+        user_rule = request.user.rule.role
         data = request.data.copy()
 
-        if user_role == 'USER':
+        if user_rule == 'USER':
             # Rôle fixé à MEMBER et organisation fixée à celle de l'utilisateur courant
-            member_role, created = Role.objects.get_or_create(
+            member_rule, created = Role.objects.get_or_create(
                 role='MEMBER',
                 active=True
             )
-            data['rule_id'] = member_role.id
+            data['rule_id'] = member_rule.id
             data['organisation_id'] = request.user.organisation.id
 
-        elif user_role == 'ADMIN':
+        elif user_rule == 'ADMIN':
             # Rôle fixé à USER, mais l'organisation doit être fournie
-            member_role, created = Role.objects.get_or_create(
+            member_rule, created = Role.objects.get_or_create(
                 role='USER',
                 active=True
             )
-            data['rule_id'] = member_role.id
+            data['rule_id'] = member_rule.id
 
         serializer = MemberSerializer(data=data)
         if serializer.is_valid():
