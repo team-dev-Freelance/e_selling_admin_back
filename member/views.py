@@ -96,7 +96,6 @@ class MemberViewSet(viewsets.ModelViewSet):
             )
             data['rule_id'] = member_rule.id
 
-            # Vérifiez si l'utilisateur courant est un Member
             if isinstance(request.user, Member):
                 data['organisation_id'] = request.user.organisation.id
             else:

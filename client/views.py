@@ -43,7 +43,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                 username=username,
                 email=email,
                 phone=phone,
-                rule=role,  # Assigner le rôle au client
+                rule=role.id,  # Assigner le rôle au client
             )
             client.set_password(password)
             client.save()
