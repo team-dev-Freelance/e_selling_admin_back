@@ -86,42 +86,39 @@ class MemberViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
-        serializer = MemberSerializer(data=request.data)
+        user_role = request.user.role.name
+        data = request.data.copy()
+
+        if user_role == 'USER':
+            # Rôle fixé à MEMBER et organisation fixée à celle de l'utilisateur courant
+            member_role, created = Role.objects.get_or_create(
+                role='MEMBER',
+                active=True
+            )
+            data['rule_id'] = member_role.id
+            data['organisation_id'] = request.user.organisation.id
+
+        elif user_role == 'ADMIN':
+            # Rôle fixé à USER, mais l'organisation doit être fournie
+            member_role, created = Role.objects.get_or_create(
+                role='USER',
+                active=True
+            )
+            data['rule_id'] = member_role.id
+
+        serializer = MemberSerializer(data=data)
         if serializer.is_valid():
-            user_role = request.user.role.name
-
-            if user_role == 'USER':
-                # Vérifier si le rôle du membre est bien "MEMBER"
-                member_role, created = Role.objects.get_or_create(
-                    role='MEMBER',
-                    active=True
-                )
-                organisation = request.user.organisation
-                serializer.save(organisation=organisation, rule=member_role)
-
-            elif user_role == 'ADMIN':
-                # Si l'utilisateur est un admin, il peut créer un membre avec un rôle "USER"
-                member_role, created = Role.objects.get_or_create(
-                    role='USER',
-                    active=True
-                )
-                organisation = serializer.validated_data['organisation_id']
-                serializer.save(organisation=organisation, rule=member_role)
-
-            else:
-                return Response({"error": "Rôle utilisateur non autorisé."}, status=status.HTTP_400_BAD_REQUEST)
-
             password = get_random_string(length=12)
-            member = serializer.instance
+
+            member = serializer.save()
             member.set_password(password)
             member.save()
 
-            user = self.request.user
             send_mail(
                 'Votre nouveau compte',
                 f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
                 f'Votre mot de passe est : {password}',
-                user.email,
+                request.user.email,
                 [member.email],
                 fail_silently=False,
             )
