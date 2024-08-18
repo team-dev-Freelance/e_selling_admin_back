@@ -86,21 +86,24 @@ class MemberViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
-        # Utilisez 'rule' au lieu de 'role'
         user_rule = request.user.rule.role
         data = request.data.copy()
 
         if user_rule == 'USER':
-            # Rôle fixé à MEMBER et organisation fixée à celle de l'utilisateur courant
             member_rule, created = Role.objects.get_or_create(
                 role='MEMBER',
                 active=True
             )
             data['rule_id'] = member_rule.id
-            data['organisation_id'] = request.user.organisation.id
+
+            # Vérifiez si l'utilisateur courant est un Member
+            if isinstance(request.user, Member):
+                data['organisation_id'] = request.user.organisation.id
+            else:
+                return Response({"detail": "L'utilisateur courant n'a pas d'organisation."},
+                                status=status.HTTP_400_BAD_REQUEST)
 
         elif user_rule == 'ADMIN':
-            # Rôle fixé à USER, mais l'organisation doit être fournie
             member_rule, created = Role.objects.get_or_create(
                 role='USER',
                 active=True

@@ -10,7 +10,7 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         # fields = ['label', 'price', 'category', 'member', 'logo']
-        exclude = ['active', 'is_staff', 'is_superuser', 'logo_name', 'password', 'last_login']
+        exclude = ['active', 'is_staff', 'is_superuser', 'password', 'last_login']
 
     def validate_phone(self, value):
         """
