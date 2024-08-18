@@ -7,8 +7,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status as drf_status, status
 
 from organisation.serializers import OrganisationSerializer
-from utilisateur.models import Utilisateur
-from utilisateur.serializers import MyTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -16,21 +22,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-
-        if response.status_code == drf_status.HTTP_200_OK:
-            try:
-                user = self.get_serializer().user
-                if user:
-                    user.status = True
-                    user.save()
-                else:
-                    # Logique à gérer si l'utilisateur n'est pas trouvé
-                    return Response({"detail": "Utilisateur non trouvé"}, status=drf_status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                # Gérer les autres exceptions qui peuvent se produire
-                return Response({"detail": "Une erreur s'est produite lors de la mise à jour du statut."},
-                                status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        logger.debug(f'Response data: {response.data}')
         return response
 
 
