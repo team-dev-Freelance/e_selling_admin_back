@@ -22,7 +22,7 @@ class MemberSerializer(serializers.ModelSerializer):
     organisation = OrganisationSerializer(read_only=True)
     organisation_id = serializers.PrimaryKeyRelatedField(queryset=Organisation.objects.all(), write_only=True)
     rule = RoleSerializer(read_only=True)
-    rule_id = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True)  # Correct
+    rule_id = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True)
 
     class Meta:
         model = Member
@@ -34,6 +34,17 @@ class MemberSerializer(serializers.ModelSerializer):
         if len(value) != 9 or not value.isdigit():
             raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
         return value
+
+    def create(self, validated_data):
+        rule_id = validated_data.pop('rule_id')
+        role = Role.objects.get(id=rule_id)
+        organisation_id = validated_data.pop('organisation_id', None)
+        if organisation_id:
+            organisation = Organisation.objects.get(id=organisation_id)
+            member = Member.objects.create(rule=role, organisation=organisation, **validated_data)
+        else:
+            member = Member.objects.create(rule=role, **validated_data)
+        return member
 
 
 

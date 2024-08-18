@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from rule.models import Role
 from utilisateur.models import Client
 
 
@@ -7,9 +8,10 @@ from utilisateur.models import Client
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    rule = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True)
+
     class Meta:
         model = Client
-        # fields = ['label', 'price', 'category', 'member', 'logo']
         exclude = ['active', 'is_staff', 'is_superuser', 'password', 'last_login']
 
     def validate_phone(self, value):
