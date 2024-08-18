@@ -97,6 +97,7 @@ class MemberViewSet(viewsets.ModelViewSet):
                     active=True
                 )
                 organisation = request.user.organisation
+                serializer.save(organisation=organisation, rule=member_role)
 
             elif user_role == 'ADMIN':
                 # Si l'utilisateur est un admin, il peut créer un membre avec un rôle "USER"
@@ -104,22 +105,14 @@ class MemberViewSet(viewsets.ModelViewSet):
                     role='USER',
                     active=True
                 )
-                organisation = serializer.validated_data.pop('organisation_id')
+                organisation = serializer.validated_data['organisation_id']
+                serializer.save(organisation=organisation, rule=member_role)
 
             else:
                 return Response({"error": "Rôle utilisateur non autorisé."}, status=status.HTTP_400_BAD_REQUEST)
 
             password = get_random_string(length=12)
-
-            member = Member(
-                username=serializer.validated_data['username'],
-                email=serializer.validated_data['email'],
-                phone=serializer.validated_data['phone'],
-                rule=member_role,
-                organisation=organisation,
-                organisation_id=organisation.id,
-                rule_id=member_role.id
-            )
+            member = serializer.instance
             member.set_password(password)
             member.save()
 
