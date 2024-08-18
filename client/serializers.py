@@ -3,16 +3,16 @@ from rest_framework import serializers
 from rule.models import Role
 from utilisateur.models import Client
 
-
 # from .models import Client
 
 
-class ClientSerializer(serializers.ModelSerializer):
-    rule = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True)
+from rest_framework import serializers
 
+
+class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        exclude = ['active', 'is_staff', 'is_superuser', 'password', 'last_login']
+        fields = ['username', 'email', 'phone', 'password']
 
     def validate_phone(self, value):
         """
@@ -25,11 +25,10 @@ class ClientSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return Client.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.phone = validated_data.get('phone', instance.phone)
-        instance.active = validated_data.get('active', instance.active)
-        instance.save()
-        return instance
+        # Assurez-vous que le mot de passe est fourni dans les données validées
+        password = validated_data.pop('password', None)
+        client = super().create(validated_data)
+        if password:
+            client.set_password(password)
+            client.save()
+        return client

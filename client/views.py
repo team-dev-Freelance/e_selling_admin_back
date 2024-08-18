@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 
 from permissions import IsOwnerOrReadOnly
 from rule.models import Role
@@ -28,6 +29,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = ClientSerializer(data=request.data)
+
         if serializer.is_valid():
             # Récupérer les données validées
             username = serializer.validated_data['username']
@@ -35,20 +37,32 @@ class ClientViewSet(viewsets.ModelViewSet):
             phone = serializer.validated_data['phone']
             password = serializer.validated_data['password']
 
-            # Vérifier ou créer le rôle par défaut pour le client
-            role, created = Role.objects.get_or_create(role='CLIENT')
+            try:
+                # Vérifier ou créer le rôle 'CLIENT'
+                role, created = Role.objects.get_or_create(role='CLIENT')
 
-            # Créer l'objet Client
-            client = Client(
-                username=username,
-                email=email,
-                phone=phone,
-                rule=role.id,  # Assigner le rôle au client
-            )
-            client.set_password(password)
-            client.save()
+                # Créer l'objet Client
+                client = Client(
+                    username=username,
+                    email=email,
+                    phone=phone,
+                    rule=role
+                )
+                client.set_password(password)
+                client.save()
 
-            return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
+                return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
+
+            except ValidationError as e:
+                # Gérer les erreurs de validation spécifiques
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+            except Exception as e:
+                # Gérer les autres exceptions générales
+                return Response({"detail": "Une erreur s'est produite lors de la création du client."},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Si les données ne sont pas valides, renvoyer les erreurs de validation
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Un client par son id: client/profileClient/

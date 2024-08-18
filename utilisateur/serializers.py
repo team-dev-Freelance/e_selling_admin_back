@@ -29,7 +29,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             data = super().validate(attrs)
 
             # Ajouter le rôle de l'utilisateur dans la réponse
-            data['role'] = user.rule.role  # Assurez-vous que `user.rule.role` contient le rôle
+            data['rule'] = user.rule.role  # Assurez-vous que `user.rule.role` contient le rôle
 
             # Ajouter l'ID de l'organisation si l'utilisateur est un Member
             if hasattr(user, 'member'):
@@ -39,5 +39,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         else:
             # Si aucun utilisateur n'est trouvé, retournez une erreur
             raise serializers.ValidationError({"detail": "No active account found with the given credentials"})
+
+
+
 
 

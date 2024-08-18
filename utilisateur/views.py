@@ -14,15 +14,24 @@ from utilisateur.serializers import MyTokenObtainPairSerializer
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-    def login(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        if response.status_code == drf_status.HTTP_200_OK:
-            user = self.get_serializer().user
-            user.status = True
-            user.save()
-        return response
 
-    action(detail=False, methods=['delete'], url_path='delete')
+        if response.status_code == drf_status.HTTP_200_OK:
+            try:
+                user = self.get_serializer().user
+                if user:
+                    user.status = True
+                    user.save()
+                else:
+                    # Logique à gérer si l'utilisateur n'est pas trouvé
+                    return Response({"detail": "Utilisateur non trouvé"}, status=drf_status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                # Gérer les autres exceptions qui peuvent se produire
+                return Response({"detail": "Une erreur s'est produite lors de la mise à jour du statut."},
+                                status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return response
 
 
 class LogoutView(APIView):

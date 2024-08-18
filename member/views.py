@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from rest_framework import viewsets
 
+from e_selling_admin_back import settings
+from organisation.models import Organisation
 from permissions import IsAdminOrUser, IsUser
 from rule.models import Role
 from utilisateur.models import Member
@@ -59,84 +61,62 @@ class MemberViewSet(viewsets.ModelViewSet):
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
-    # def create(self, request):
-    #     serializer = MemberSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         password = get_random_string(length=12)
-    #
-    #         member = Member(
-    #             username=serializer.validated_data['username'],
-    #             email=serializer.validated_data['email'],
-    #             phone=serializer.validated_data['phone'],
-    #             rule=serializer.validated_data.pop('rule_id'),
-    #             organisation=serializer.validated_data.pop('organisation_id')
-    #         )
-    #         user = self.request.user
-    #         send_mail(
-    #             'Votre nouveau compte',
-    #             f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
-    #             f'Votre mot de passe est : {password}',
-    #             user.email,
-    #             [member.email],
-    #             fail_silently=False,
-    #         )
-    #         member.set_password(password)
-    #         member.save()
-    #         return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        # Passez le contexte de la requête au sérialiseur
+        serializer = self.get_serializer(data=request.data, context={'request': request})
 
-    def create(self, request):
-        user_rule = request.user.rule.role
-        data = request.data.copy()
-
-        if user_rule == 'USER':
-            member_rule, created = Role.objects.get_or_create(
-                role='MEMBER',
-                active=True
-            )
-            data['rule_id'] = member_rule.id
-
-            if isinstance(request.user, Member):
-                data['organisation_id'] = request.user.organisation.id
-            else:
-                return Response({"detail": "L'utilisateur courant n'a pas d'organisation."},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-        elif user_rule == 'ADMIN':
-            member_rule, created = Role.objects.get_or_create(
-                role='USER',
-                active=True
-            )
-            data['rule_id'] = member_rule.id
-
-        serializer = MemberSerializer(data=data)
+        # Valide les données
         if serializer.is_valid():
-            password = get_random_string(length=12)
+            # Récupère l'utilisateur courant
+            user = self.request.user
 
-            member = serializer.save()
+            # Détermine le rôle
+            if user.rule.role == 'USER':
+                role, _ = Role.objects.get_or_create(role='MEMBER')
+            else:
+                role, _ = Role.objects.get_or_create(role='USER')
+
+            # Détermine l'organisation
+            organisation_id = request.data.get('organisation_id')
+            if user.rule.role == 'USER':
+                organisation = user.member.organisation
+            else:
+                organisation = Organisation.objects.get(id=organisation_id) if organisation_id else None
+
+            # Génère un mot de passe aléatoire
+            password = get_random_string(length=8)
+
+            # Crée le membre avec le mot de passe généré
+            member = serializer.save(rule=role, organisation=organisation)
             member.set_password(password)
             member.save()
 
-            send_mail(
-                'Votre nouveau compte',
-                f'Bonjour,\nVos identifiants de connexion sont:\nVotre nom d\'utilisateur est: {member.username}\n'
-                f'Votre mot de passe est : {password}',
-                request.user.email,
-                [member.email],
-                fail_silently=False,
-            )
-            return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
+            # Envoi de l'email avec les informations de connexion
+            self.send_welcome_email(member, password)
 
+            return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # def create(self, request):
-    #     serializer = MemberSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def send_welcome_email(self, member, password):
+        subject = 'Bienvenue dans GIC Connect'
+        message = f"""
+        Bonjour {member.username},
 
-    # Un membre par son id: member/profileMember/
+        Votre compte a été créé avec succès. Voici vos informations de connexion :
+
+        - Nom d'utilisateur : {member.username}
+        - Mot de passe : {password}
+
+        Merci de nous avoir rejoints !
+
+        Cordialement,
+        L'équipe GIC Connect
+        """
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [member.email]
+
+        send_mail(subject, message, from_email, recipient_list)
+
     @action(detail=False, methods=['get'], url_path='profileMember')
     def profile(self, request):
         try:
