@@ -27,4 +27,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if hasattr(user, 'member'):
             data['organisation_id'] = user.member.organisation.id
 
+        if user.logo:
+            data['logo'] = user.logo.url
+
         return data
