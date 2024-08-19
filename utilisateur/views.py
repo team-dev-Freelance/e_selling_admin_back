@@ -27,6 +27,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         user = request.user
