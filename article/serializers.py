@@ -6,6 +6,7 @@ from .models import Article
 
 
 class ArticleSerializer(serializers.ModelSerializer):
+    category = CategorieSerializer(read_only=True)
     category_id = serializers.IntegerField(required=False, write_only=True)
     logo = serializers.ImageField(required=False)
 
