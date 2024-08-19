@@ -6,11 +6,12 @@ from .models import Article
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    category = CategorieSerializer(read_only=True)  # Pour les requêtes GET
-    category_id = serializers.PrimaryKeyRelatedField(queryset=Categorie.objects.all(),
-                                                         write_only=True)
+    category_id = serializers.IntegerField(required=False, write_only=True)
+    logo = serializers.ImageField(required=False)
 
     class Meta:
         model = Article
-        fields = ['label', 'price', 'category', 'category_id', 'member', 'logo']
-        # exclude = ['active']
+        fields = ['id', 'label', 'price', 'category_id', 'member', 'logo']
+
+
+

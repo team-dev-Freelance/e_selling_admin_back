@@ -12,7 +12,7 @@ from cloudinary.models import CloudinaryField
 
 
 class Article(models.Model):
-    label = models.CharField(max_length=255)
+    label = models.CharField(max_length=255) # Mettre a unique
     price = models.DecimalField(max_digits=10, decimal_places=2)
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Categorie, on_delete=models.CASCADE)

@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 
+from categorie.models import Categorie
 # from member.models import Member
 from permissions import IsUser, IsMemberOrUser, IsAdmin, IsCreatorOrReadOnly, IsOwnerOrReadOnly
 from .models import Article
@@ -33,12 +34,21 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['member'] = request.user.id
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = self.request.user
+            member = user.member
+
+            categorie_id = request.data.get('category_id')
+            try:
+                category_instance = Categorie.objects.get(id=categorie_id)
+            except Categorie.DoesNotExist:
+                return Response({'detail': 'Category not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Passer uniquement les données validées au serializer
+            article = serializer.save(member=member, category=category_instance)
+            return Response(ArticleSerializer(article).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()
