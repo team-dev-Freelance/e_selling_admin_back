@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     'categorie',
     # 'acheter',
     'utilisateur',
+    'passwordResetCode',
     'corsheaders',
 ]
 
