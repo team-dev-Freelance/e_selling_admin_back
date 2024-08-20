@@ -1,20 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import status as drf_status, status
+from rest_framework import status
 
 from organisation.serializers import OrganisationSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from passwordResetCode.models import PasswordResetCode
-from .serializers import MyTokenObtainPairSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .models import Utilisateur
 from .serializers import MyTokenObtainPairSerializer
 import logging
 
@@ -38,9 +36,6 @@ class LogoutView(APIView):
         user.status = False
         user.save()
         return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
-
-
-User = get_user_model()
 
 
 class CurrentUserView(APIView):
@@ -78,7 +73,7 @@ class ChangePasswordView(APIView):
 
         try:
             # Rechercher l'utilisateur dans la base de données par nom d'utilisateur ou email
-            user = User.objects.get(email=email)  # ou email=email selon ce que vous préférez
+            user = Utilisateur.objects.get(email=email)  # ou email=email selon ce que vous préférez
 
             # Vérification du mot de passe actuel
             if not user.check_password(current_password):
@@ -101,7 +96,7 @@ class ChangePasswordView(APIView):
 
             return Response({"message": "Le mot de passe a été changé avec succès."}, status=status.HTTP_200_OK)
 
-        except User.DoesNotExist:
+        except Utilisateur.DoesNotExist:
             return Response({"error": "Utilisateur non trouvé."}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -109,7 +104,7 @@ class ResendPasswordResetCodeView(APIView):
     def post(self, request):
         email = request.data.get('email')
         try:
-            user = User.objects.get(email=email)
+            user = Utilisateur.objects.get(email=email)
             # Supprimer les anciens codes de réinitialisation s'ils existent
             PasswordResetCode.objects.filter(user=user).delete()
             # Générer un nouveau code
@@ -124,5 +119,5 @@ class ResendPasswordResetCodeView(APIView):
                 fail_silently=False,
             )
             return Response({"message": "Nouveau code envoyé à votre adresse e-mail."}, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
+        except Utilisateur.DoesNotExist:
             return Response({"error": "Utilisateur avec cet e-mail n'existe pas."}, status=status.HTTP_400_BAD_REQUEST)
