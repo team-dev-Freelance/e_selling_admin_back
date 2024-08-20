@@ -100,6 +100,45 @@ class ChangePasswordView(APIView):
             return Response({"error": "Utilisateur non trouvé."}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ResetPasswordView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # Récupération des données
+        email = request.data.get("email")  # ou email, selon ce que vous préférez
+        # current_password = request.data.get("current_password")
+        new_password = request.data.get("new_password")
+        confirm_password = request.data.get("confirm_password")
+
+        try:
+            # Rechercher l'utilisateur dans la base de données par nom d'utilisateur ou email
+            user = Utilisateur.objects.get(email=email)  # ou email=email selon ce que vous préférez
+
+            # # Vérification du mot de passe actuel
+            # if not user.check_password(current_password):
+            #     return Response({"current_password": "Le mot de passe actuel est incorrect."},
+            #                     status=status.HTTP_400_BAD_REQUEST)
+
+            # Vérification de la correspondance des nouveaux mots de passe
+            if new_password != confirm_password:
+                return Response({"new_password": "Les nouveaux mots de passe ne correspondent pas."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Vérification si le nouveau mot de passe est identique à l'ancien
+            # if current_password == new_password:
+            #     return Response({"new_password": "Le nouveau mot de passe ne peut pas être identique à l'ancien."},
+            #                     status=status.HTTP_400_BAD_REQUEST)
+
+            # Mise à jour du mot de passe
+            user.set_password(new_password)
+            user.save()
+
+            return Response({"message": "Le mot de passe a été changé avec succès."}, status=status.HTTP_200_OK)
+
+        except Utilisateur.DoesNotExist:
+            return Response({"error": "Utilisateur non trouvé."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ResendPasswordResetCodeView(APIView):
     def post(self, request):
         email = request.data.get('email')
