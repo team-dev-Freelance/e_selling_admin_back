@@ -1,6 +1,8 @@
 # models.py
 
 from django.db import models
+from django.utils import timezone
+
 from article.models import Article
 from utilisateur.models import Client
 
@@ -8,6 +10,7 @@ from utilisateur.models import Client
 class Cart(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     articles = models.ManyToManyField(Article, through='CartItem')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def get_total_price(self):
         total = 0

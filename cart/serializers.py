@@ -1,39 +1,41 @@
 # serializers.py
 
 from rest_framework import serializers
+
+from article.serializers import ArticleSerializer
 from .models import Cart, CartItem
 
 
-class CartItemCreateSerializer(serializers.ModelSerializer):
+class CartItemSerializer(serializers.ModelSerializer):
+    article = ArticleSerializer()
+
     class Meta:
         model = CartItem
-        fields = ['article', 'quantity']
+        fields = ['id', 'article', 'quantity', 'get_total_price']
 
 
-class CartWithItemsSerializer(serializers.ModelSerializer):
-    cart_items = CartItemCreateSerializer(source='cartitem_set',
-        many=True)  # Retirez 'source' si vous n'utilisez pas une relation inversée personnalisée
-    total_price = serializers.SerializerMethodField()
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True)
 
     class Meta:
         model = Cart
-        fields = ['cart_items', 'total_price']
+        fields = ['id', 'client', 'created_at', 'items']
 
     def get_total_price(self, obj):
         return obj.get_total_price()
 
-    def create(self, validated_data):
-        cart_items_data = validated_data.pop('cartitem_set', [])
-        if not cart_items_data:
-            raise serializers.ValidationError("No cart items data found in request.")
-
-        request = self.context.get('request')
-        client = request.user.client
-
-        # Création d'un nouveau panier
-        cart = Cart.objects.create(client=client)
-
-        for item_data in cart_items_data:
-            CartItem.objects.create(cart=cart, **item_data)
-
-        return cart
+    # def create(self, validated_data):
+    #     cart_items_data = validated_data.pop('cartitem_set', [])
+    #     if not cart_items_data:
+    #         raise serializers.ValidationError("Aucune donnée d'articles de panier trouvée dans la requête.")
+    #
+    #     request = self.context.get('request')
+    #     client = request.user.client
+    #
+    #     # Création d'un nouveau panier
+    #     cart = Cart.objects.create(client=client)
+    #
+    #     for item_data in cart_items_data:
+    #         CartItem.objects.create(cart=cart, **item_data)
+    #
+    #     return cart

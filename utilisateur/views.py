@@ -66,7 +66,8 @@ class ChangePasswordView(APIView):
 
     def post(self, request, *args, **kwargs):
         # Récupération des données
-        email = request.data.get("email")  # ou email, selon ce que vous préférez
+        user = request.user  # Récupère l'utilisateur courant
+        email = user.email
         current_password = request.data.get("current_password")
         new_password = request.data.get("new_password")
         confirm_password = request.data.get("confirm_password")

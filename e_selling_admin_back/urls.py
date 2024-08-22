@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import (
 
 # from acheter.views import AcheterViewSet
 from article.views import ArticleViewSet
-from cart.views import CartViewSet
+from cart.views import CartView
 # from cart.views import CartViewSet
 # from cart.views import CartView
 # from cart.views import CartDetailView
@@ -33,13 +33,10 @@ router.register(r'article', ArticleViewSet)
 router.register(r'client', ClientViewSet)
 router.register(r'categorie', CategoriesViewSet)
 # router.register(r'acheter', AcheterViewSet)
-router.register('cart', CartViewSet)
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    # path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('logout/', LogoutView.as_view(), name='logout'),
@@ -49,6 +46,8 @@ urlpatterns = [
     path('verify-reset-code/', VerifyResetCodeView.as_view(), name='verify_reset_code'),
     path('resend-code/', ResendPasswordResetCodeView.as_view(), name='resend_code'),
     path('current-user/', CurrentUserView.as_view(), name='current_user'),
+    path('cart/', CartView.as_view(), name='cart'),
+    path('cart/<int:item_id>/', CartView.as_view(), name='cart-item-delete'),
 ]
 
 # Ajoutez les configurations pour les fichiers médias si en mode développement
