@@ -16,7 +16,7 @@ class Cart(models.Model):
         total = 0
         cart_items = CartItem.objects.filter(cart=self)
         for item in cart_items:
-            total += item.article.price * item.quantity  # Use 'quantity' here
+            total += item.article.price * item.quantity
         return total
 
 
