@@ -1,32 +1,41 @@
-# views.py
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated  # Import du permission class
 
 from article.models import Article
 from .models import Cart, CartItem
-from .serializers import CartSerializer
-
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Cart, CartItem
-from article.models import Article
 from .serializers import CartSerializer
 
 
 class CartView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
+        # Vérification que l'utilisateur est authentifié
+        if not request.user.is_authenticated:
+            return Response({'error': 'Vous devez être connecté pour voir le panier.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         # Assurez-vous que le client est bien associé à l'utilisateur
-        client = request.user.client
+        client = getattr(request.user, 'client', None)
+        if not client:
+            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
+
         cart, created = Cart.objects.get_or_create(client=client)
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'Vous devez être connecté pour ajouter des articles au panier.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         article_id = request.data.get('article_id')
         quantity = request.data.get('quantity', 1)
-        client = request.user.client  # Utilisation du client pour la recherche du panier
+        client = getattr(request.user, 'client', None)
+        if not client:
+            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             article = Article.objects.get(id=article_id)
@@ -46,14 +55,20 @@ class CartView(APIView):
         return Response(serializer.data)
 
     def delete(self, request, item_id):
-        client = request.user.client  # Utilisation du client pour la recherche du panier
+        if not request.user.is_authenticated:
+            return Response({'error': 'Vous devez être connecté pour supprimer des articles du panier.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        client = getattr(request.user, 'client', None)
+        if not client:
+            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
+
         try:
             cart_item = CartItem.objects.get(id=item_id)
             cart_item.delete()
         except CartItem.DoesNotExist:
             return Response({'error': 'L\'élément du panier est introuvable'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Met à jour le panier après la suppression de l'élément
         cart = Cart.objects.get(client=client)
         serializer = CartSerializer(cart)
         return Response(serializer.data)
