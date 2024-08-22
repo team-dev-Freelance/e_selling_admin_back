@@ -1,5 +1,6 @@
 # views.py
 
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,17 +9,17 @@ from .models import Cart, CartItem
 from .serializers import CartSerializer
 
 
-class CartView(APIView):
+class CartViewSet(APIView):
     def get(self, request):
         cart, created = Cart.objects.get_or_create(user=request.user)
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
     def post(self, request):
-        client_id = request.data.get('client_id')
+        article_id = request.data.get('article_id')
         quantity = request.data.get('quantity', 1)
 
-        article = Article.objects.get(id=client_id)
+        article = Article.objects.get(id=article_id)
         cart, created = Cart.objects.get_or_create(user=request.user)
 
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
@@ -38,4 +39,3 @@ class CartView(APIView):
         cart = Cart.objects.get(user=request.user)
         serializer = CartSerializer(cart)
         return Response(serializer.data)
-
