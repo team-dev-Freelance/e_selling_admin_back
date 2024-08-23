@@ -11,15 +11,20 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id', 'article', 'quantity', 'get_total_price']
+        fields = ['id', 'article', 'quantity']
 
 
 class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True)
+    items = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Cart
-        fields = ['id', 'client', 'created_at', 'items']
+        fields = ['id', 'client', 'created_at', 'items', 'total_price']
+
+    def get_items(self, obj):
+        cart_items = CartItem.objects.filter(cart=obj)
+        return CartItemSerializer(cart_items, many=True).data
 
     def get_total_price(self, obj):
         return obj.get_total_price()

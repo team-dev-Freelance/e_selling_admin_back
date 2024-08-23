@@ -32,14 +32,14 @@ class CartView(APIView):
             return Response({'error': 'Vous devez être connecté pour ajouter des articles au panier.'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        client_id = request.data.get('clientId')
+        # Je veux recuperer ici l'id de l'utilisateur courant
+        client_id = request.user.client.id
         article_id = request.data.get('articleId')
         quantity = request.data.get('quantity')
 
         if not client_id or not article_id or quantity is None:
             return Response({'error': 'Données manquantes ou invalides.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Assurez-vous que les types de données sont corrects
         try:
             client = Client.objects.get(id=client_id)
         except Client.DoesNotExist:
@@ -53,7 +53,6 @@ class CartView(APIView):
         cart, created = Cart.objects.get_or_create(client=client)
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
 
-        # Assurez-vous que quantity est un entier et non null
         cart_item.quantity = quantity
         cart_item.save()
 
