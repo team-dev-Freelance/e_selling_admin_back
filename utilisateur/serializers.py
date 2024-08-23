@@ -23,6 +23,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         attrs['user'] = user
         data = super().validate(attrs)
         data['rule'] = user.rule.role
+        data['user_id'] = user.id
 
         if hasattr(user, 'member'):
             data['organisation_id'] = user.member.organisation.id
