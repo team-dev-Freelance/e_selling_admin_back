@@ -34,10 +34,10 @@ class CartView(APIView):
 
         client_id = request.data.get('clientId')
         article_id = request.data.get('articleId')
-        quantity = request.data.get('quantity', 1)
+        quantity = request.data.get('quantity')
 
         if not client_id or not article_id or quantity is None:
-            return Response({'error': 'Données manquantes.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Données manquantes ou invalides.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Assurez-vous que les types de données sont corrects
         try:
@@ -53,10 +53,8 @@ class CartView(APIView):
         cart, created = Cart.objects.get_or_create(client=client)
         cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
 
-        if item_created:
-            cart_item.quantity = quantity
-        else:
-            cart_item.quantity += quantity
+        # Assurez-vous que quantity est un entier et non null
+        cart_item.quantity = quantity
         cart_item.save()
 
         serializer = CartSerializer(cart)
