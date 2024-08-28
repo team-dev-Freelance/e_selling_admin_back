@@ -75,10 +75,13 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['192.168.43.174', 'localhost', '127.0.0.1', 'web-production-4dcfa.up.railway.app', 'fearless'
-#                                                                                                     '-amazement'
-#                                                                                                     '-production.up'
-#                                                                                                     '.railway.app/']
+ALLOWED_HOSTS = [
+    'web-production-4dcfa.up.railway.app',
+    'fearless-amazement-production.up.railway.app',
+    'localhost',
+    '127.0.0.1',
+]
+
 CORS_ALLOWED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://localhost:4200',
