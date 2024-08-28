@@ -31,7 +31,7 @@ cloudinary.config(
 
 # # Upload an image
 upload_result = cloudinary.uploader.upload("https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-                                            public_id="shoes")
+                                           public_id="shoes")
 # print(upload_result["secure_url"])
 #
 # # Optimize delivery by resizing and applying auto-format and auto-quality
@@ -87,8 +87,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = ['https://res.cloudinary.com/', 'http://192.168.43.174:8000', 'http://localhost:4200',
-                        'http://web-production-4dcfa.up.railway.app', 'https://fearless-amazement-production.up'
-                                                                      '.railway.app/']
+                        'https://web-production-4dcfa.up.railway.app', 'https://fearless-amazement-production.up'
+                                                                       '.railway.app/']
 
 # CORS_ALLOW_ALL_ORIGINS = True
 
@@ -101,7 +101,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Pour utiliser User et Member
     # Ajoutez d'autres backends si nécessaire
 ]
-
 
 # Application definition
 
@@ -172,7 +171,6 @@ DATABASES = {
     }
 }
 
-
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (
 #         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -207,7 +205,6 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
