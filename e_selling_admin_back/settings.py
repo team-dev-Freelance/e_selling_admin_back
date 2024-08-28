@@ -75,20 +75,24 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.43.174', 'localhost', '127.0.0.1', 'web-production-4dcfa.up.railway.app', 'fearless'
-                                                                                                    '-amazement'
-                                                                                                    '-production.up'
-                                                                                                    '.railway.app/']
+# ALLOWED_HOSTS = ['192.168.43.174', 'localhost', '127.0.0.1', 'web-production-4dcfa.up.railway.app', 'fearless'
+#                                                                                                     '-amazement'
+#                                                                                                     '-production.up'
+#                                                                                                     '.railway.app/']
 CORS_ALLOWED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://localhost:4200',
     'https://web-production-4dcfa.up.railway.app',
-    'https://fearless-amazement-production.up.railway.app/'
+    'https://fearless-amazement-production.up.railway.app'
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://res.cloudinary.com/', 'http://192.168.43.174:8000', 'http://localhost:4200',
-                        'https://web-production-4dcfa.up.railway.app', 'https://fearless-amazement-production.up'
-                                                                       '.railway.app/']
+CSRF_TRUSTED_ORIGINS = [
+    'https://res.cloudinary.com',
+    'http://192.168.43.174:8000',
+    'http://localhost:4200',
+    'https://web-production-4dcfa.up.railway.app',
+    'https://fearless-amazement-production.up.railway.app'
+]
 
 # CORS_ALLOW_ALL_ORIGINS = True
 
@@ -208,15 +212,15 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Déplacez-le ici si ce n'est pas déjà fait
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
 ]
+
 
 # SIMPLE_JWT = {
 #     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
