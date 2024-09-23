@@ -122,3 +122,36 @@ class ArticleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # Liste des articles actifs pour une organisation et une categorie: article/{id}/articles_actifs/
+    @action(detail=True, methods=['get'], url_path='articles_actifs')
+    def list_active_articles_by_organisation_and_category(self, request, pk=None):
+        try:
+            # Récupérer l'article en utilisant le pk fourni dans l'URL
+            article = Article.objects.get(pk=pk)
+
+            # Récupérer le membre ayant publié cet article
+            member = article.member
+
+            # Récupérer l'organisation à laquelle appartient le membre
+            organisation = member.organisation
+
+            # Filtrer les articles actifs de cette organisation et cette catégorie
+            articles = Article.objects.filter(member__organisation=organisation, category=article.category,
+                                              active=True).distinct()
+
+            # Vérifier si des articles sont trouvés
+            if articles.exists():
+                serializer = ArticleSerializer(articles, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {"detail": "Aucun article actif trouvé pour cette organisation et cette catégorie."},
+                    status=status.HTTP_404_NOT_FOUND)
+
+        except Article.DoesNotExist:
+            return Response({"detail": "Article non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"detail": f"Une erreur s'est produite : {str(e)}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
