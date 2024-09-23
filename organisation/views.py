@@ -237,7 +237,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='articles_actifs')
     def list_active_articles_by_organisation_and_category(self, request, pk=None):
         try:
-            # Récupérer l'article à partir du pk (ID)
+            # Récupérer l'article en utilisant le pk fourni dans l'URL
             article = Article.objects.get(pk=pk)
 
             # Récupérer le membre ayant publié cet article
@@ -246,7 +246,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             # Récupérer l'organisation à laquelle appartient le membre
             organisation = member.organisation
 
-            # Utiliser l'organisation et la catégorie de l'article pour filtrer les autres articles
+            # Filtrer les articles actifs de cette organisation et cette catégorie
             articles = Article.objects.filter(member__organisation=organisation, category=article.category,
                                               active=True).distinct()
 

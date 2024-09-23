@@ -36,7 +36,6 @@ router.register(r'categorie', CategoriesViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('logout/', LogoutView.as_view(), name='logout'),
@@ -48,6 +47,7 @@ urlpatterns = [
     path('current-user/', CurrentUserView.as_view(), name='current_user'),
     path('cart/', CartView.as_view(), name='cart'),
     path('cart/<int:item_id>/', CartView.as_view(), name='cart-item-delete'),
+    path('', include(router.urls)),
 ]
 
 # Ajoutez les configurations pour les fichiers médias si en mode développement
