@@ -154,4 +154,3 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return Response({"detail": f"Une erreur s'est produite : {str(e)}"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        

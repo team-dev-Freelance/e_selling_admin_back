@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     # 'member',
     'organisation',
     'cart',
+    'order',
     'rule',
     'privilegies',
     'article',
