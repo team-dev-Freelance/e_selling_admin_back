@@ -33,7 +33,7 @@ router.register(r'privilegies', PrivilegiesViewSet)
 router.register(r'article', ArticleViewSet)
 router.register(r'client', ClientViewSet)
 router.register(r'categorie', CategoriesViewSet)
-router.register(r'orders', OrderViewSet, basename='order')
+router.register(r'order', OrderViewSet)
 # router.register(r'acheter', AcheterViewSet)
 
 urlpatterns = [
