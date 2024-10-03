@@ -14,7 +14,7 @@ from utilisateur.models import Member, Client
 class PasserCommandeView(APIView):
     def post(self, request):
         try:
-            client = request.user  # L'utilisateur courant (le client qui passe la commande)
+            client = Client.objects.get(user=request.user)
             panier = Cart.objects.get(client=client)  # Récupérer le panier du client
 
             if panier.articles.count() == 0:  # Vérifie si le panier est vide
