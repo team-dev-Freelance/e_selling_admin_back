@@ -42,7 +42,7 @@ class PasserCommandeView(APIView):
                 message = f"""
                 Bonjour {admin_organisation.username},
 
-                Une nouvelle commande a été passée pour l'organisation {article_organisation.name}.
+                Une nouvelle commande a été passée pour l'organisation {article_organisation.label}.
 
                 Client : {client.username}
                 Numéro de téléphone : {client.phone}
