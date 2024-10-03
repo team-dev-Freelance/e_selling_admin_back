@@ -33,7 +33,7 @@ class PasserCommandeView(APIView):
             # Trouver l'admin de l'organisation (membre avec le rôle 'ADMIN')
             admin_organisation = Member.objects.filter(
                 organisation=article_organisation,
-                rule__role='ADMIN'  # Vérifiez que cela correspond bien au rôle que vous avez défini
+                rule__role='USER'  # Vérifiez que cela correspond bien au rôle que vous avez défini
             ).first()
 
             if admin_organisation:
