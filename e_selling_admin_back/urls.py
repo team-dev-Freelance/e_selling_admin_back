@@ -17,7 +17,7 @@ from categorie.views import CategoriesViewSet
 from client.views import ClientViewSet
 from e_selling_admin_back import settings
 from member.views import MemberViewSet
-from order.views import OrderViewSet
+from order.views import OrderViewSet, PasserCommandeView
 from organisation.views import OrganisationViewSet
 from passwordResetCode.views import SendPasswordResetCodeView, VerifyResetCodeView
 from privilegies.views import PrivilegiesViewSet
@@ -48,7 +48,8 @@ urlpatterns = [
     path('resend-code/', ResendPasswordResetCodeView.as_view(), name='resend_code'),
     path('current-user/', CurrentUserView.as_view(), name='current_user'),
     path('cart/', CartView.as_view(), name='cart'),
-    # path('cart/<int:item_id>/', CartView.as_view(), name='cart-item-delete'),
+    path('cart/<int:item_id>/', CartView.as_view(), name='cart-item-delete'),
+    path('cart/passer_commande/', PasserCommandeView.as_view(), name='passer_commande'),
     path('', include(router.urls)),
 ]
 

@@ -2,6 +2,7 @@ from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from django.conf import settings
 
@@ -10,10 +11,8 @@ from .models import Order, OrderItem
 from utilisateur.models import Member
 
 
-class OrderViewSet(ViewSet):
-
-    @action(detail=False, methods=['post'], url_path='passer_commande')
-    def passer_commande(self, request):
+class PasserCommandeView(APIView):
+    def post(self, request):
         try:
             client = request.user  # L'utilisateur courant (le client qui passe la commande)
             panier = Cart.objects.get(client=client)  # Récupérer le panier du client
