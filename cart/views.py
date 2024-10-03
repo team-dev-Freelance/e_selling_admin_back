@@ -25,10 +25,12 @@ class CartView(APIView):
         client_id = request.user.client.id
         cart_items = request.data.get('cart_items', [])
 
-        # if len(article_ids) != len(quantities):
-        #     return Response({'error': 'Les articles et les quantités ne correspondent pas.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        cart, created = Cart.objects.get_or_create(client_id=client_id)
+        try:
+            # Récupérer le panier existant du client (s'il existe)
+            cart = Cart.objects.get(client_id=client_id)
+        except Cart.DoesNotExist:
+            # Créer un nouveau panier si le client n'en a pas encore
+            cart = Cart.objects.create(client_id=client_id)
 
         for item in cart_items:
             article_id = item.get('article')
