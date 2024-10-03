@@ -14,7 +14,7 @@ from utilisateur.models import Member, Client
 class PasserCommandeView(APIView):
     def post(self, request):
         try:
-            client = Client.objects.get(user=request.user)
+            client = request.user  # L'utilisateur courant (le client qui passe la commande)
             panier = Cart.objects.get(client=client)  # Récupérer le panier du client
 
             if panier.articles.count() == 0:  # Vérifie si le panier est vide
@@ -30,8 +30,11 @@ class PasserCommandeView(APIView):
             # Trouver l'organisation associée aux articles du panier
             article_organisation = panier.cartitem_set.first().article.member.organisation
 
-            # Trouver l'admin de l'organisation (membre avec le rôle 'user')
-            admin_organisation = Member.objects.filter(organisation=article_organisation, role__rule='user').first()
+            # Trouver l'admin de l'organisation (membre avec le rôle 'ADMIN')
+            admin_organisation = Member.objects.filter(
+                organisation=article_organisation,
+                rule__role='ADMIN'  # Vérifiez que cela correspond bien au rôle que vous avez défini
+            ).first()
 
             if admin_organisation:
                 # Préparer l'email à envoyer
