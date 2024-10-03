@@ -22,10 +22,11 @@ class PasserCommandeView(APIView):
 
             # Créer la commande
             order = Order.objects.create(client=client, status='pending')
-
+            total_price = 0
             # Ajouter les articles à la commande
             for item in panier.cartitem_set.all():  # Parcourir les articles du panier
                 OrderItem.objects.create(order=order, article=item.article, quantity=item.quantity)
+                total_price += item.article.price * item.quantity
 
             # Trouver l'organisation associée aux articles du panier
             article_organisation = panier.cartitem_set.first().article.member.organisation
@@ -46,6 +47,7 @@ class PasserCommandeView(APIView):
 
                 Client : {client.username}
                 Numéro de téléphone : {client.phone}
+                Prix total : {total_price} Fcfa
 
                 Articles commandés :
                 """
