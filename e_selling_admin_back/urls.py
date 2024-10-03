@@ -17,7 +17,8 @@ from categorie.views import CategoriesViewSet
 from client.views import ClientViewSet
 from e_selling_admin_back import settings
 from member.views import MemberViewSet
-from order.views import OrderViewSet, PasserCommandeView
+from order.views import PasserCommandeView
+# from order.views import OrderViewSet, PasserCommandeView
 from organisation.views import OrganisationViewSet
 from passwordResetCode.views import SendPasswordResetCodeView, VerifyResetCodeView
 from privilegies.views import PrivilegiesViewSet
@@ -33,7 +34,7 @@ router.register(r'privilegies', PrivilegiesViewSet)
 router.register(r'article', ArticleViewSet)
 router.register(r'client', ClientViewSet)
 router.register(r'categorie', CategoriesViewSet)
-router.register(r'orders', OrderViewSet, basename='order')
+# router.register(r'orders', OrderViewSet, basename='order')
 # router.register(r'acheter', AcheterViewSet)
 
 urlpatterns = [
