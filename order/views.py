@@ -68,6 +68,7 @@ class PasserCommandeView(APIView):
 
                 # Vider le panier en supprimant les articles
                 panier.cartitem_set.all().delete()  # Supprime tous les articles du panier
+                panier.delete()
 
                 return Response({"detail": "Commande passée et notification envoyée."}, status=status.HTTP_201_CREATED)
             else:
