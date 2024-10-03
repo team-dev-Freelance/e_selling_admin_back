@@ -22,11 +22,14 @@ class PasserCommandeView(APIView):
 
             # Créer la commande
             order = Order.objects.create(client=client, status='pending')
+
+            # Initialiser le prix total
             total_price = 0
-            # Ajouter les articles à la commande
+
+            # Ajouter les articles à la commande et calculer le prix total
             for item in panier.cartitem_set.all():  # Parcourir les articles du panier
                 OrderItem.objects.create(order=order, article=item.article, quantity=item.quantity)
-                total_price += item.article.price * item.quantity
+                total_price += item.article.price * item.quantity  # Calculez le prix total
 
             # Trouver l'organisation associée aux articles du panier
             article_organisation = panier.cartitem_set.first().article.member.organisation
@@ -70,7 +73,10 @@ class PasserCommandeView(APIView):
             else:
                 return Response({"detail": "Admin de l'organisation non trouvé."}, status=status.HTTP_404_NOT_FOUND)
 
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
         except Cart.DoesNotExist:
             return Response({"detail": "Panier non trouvé."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"detail": f"Erreur : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
