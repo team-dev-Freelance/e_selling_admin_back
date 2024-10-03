@@ -23,15 +23,20 @@ class CartView(APIView):
 
     def post(self, request):
         client_id = request.user.client.id
-        article_ids = request.data.get('articleIds', [])
-        quantities = request.data.get('quantities', [])
+        cart_items = request.data.get('cart_items', [])
 
-        if len(article_ids) != len(quantities):
-            return Response({'error': 'Les articles et les quantités ne correspondent pas.'}, status=status.HTTP_400_BAD_REQUEST)
+        # if len(article_ids) != len(quantities):
+        #     return Response({'error': 'Les articles et les quantités ne correspondent pas.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart, created = Cart.objects.get_or_create(client_id=client_id)
 
-        for article_id, quantity in zip(article_ids, quantities):
+        for item in cart_items:
+            article_id = item.get('article')
+            quantity = item.get('quantity')
+            if not article_id or not quantity:
+                return Response({'error': 'Données d\'article ou de quantité manquantes.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
             try:
                 article = Article.objects.get(id=article_id)
                 cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
