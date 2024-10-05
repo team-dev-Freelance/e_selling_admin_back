@@ -1,9 +1,7 @@
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.views import APIView
-from rest_framework.viewsets import ViewSet
 from django.conf import settings
 
 from cart.models import Cart
@@ -41,9 +39,9 @@ class PasserCommandeView(APIView):
             ).first()
 
             if admin_organisation:
-                # Préparer l'email à envoyer
-                subject = "Nouvelle commande passée"
-                message = f"""
+                # Préparer l'email à envoyer à l'admin de l'organisation
+                subject_admin = "Nouvelle commande passée"
+                message_admin = f"""
                 Bonjour {admin_organisation.username},
 
                 Une nouvelle commande a été passée pour l'organisation {article_organisation.label}.
@@ -56,13 +54,35 @@ class PasserCommandeView(APIView):
                 """
 
                 for item in panier.cartitem_set.all():
-                    message += f"- {item.article.label} (Quantité : {item.quantity})\n"
+                    message_admin += f"- {item.article.label} (Quantité : {item.quantity})\n"
 
                 send_mail(
-                    subject,
-                    message,
+                    subject_admin,
+                    message_admin,
                     settings.DEFAULT_FROM_EMAIL,
                     [admin_organisation.email],
+                    fail_silently=False,
+                )
+
+                # Préparer l'email à envoyer au client
+                subject_client = "Confirmation de votre commande"
+                message_client = f"""
+                Bonjour {client.username},
+
+                Merci pour votre commande ! Voici un récapitulatif :
+
+                Prix total : {total_price} Fcfa
+                Articles commandés :
+                """
+
+                for item in panier.cartitem_set.all():
+                    message_client += f"- {item.article.label} (Quantité : {item.quantity})\n"
+
+                send_mail(
+                    subject_client,
+                    message_client,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [client.email],
                     fail_silently=False,
                 )
 
@@ -70,7 +90,8 @@ class PasserCommandeView(APIView):
                 panier.cartitem_set.all().delete()  # Supprime tous les articles du panier
                 panier.delete()
 
-                return Response({"detail": "Commande passée et notification envoyée."}, status=status.HTTP_201_CREATED)
+                return Response({"detail": "Commande passée et notifications envoyées."},
+                                status=status.HTTP_201_CREATED)
             else:
                 return Response({"detail": "Admin de l'organisation non trouvé."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -80,4 +101,3 @@ class PasserCommandeView(APIView):
             return Response({"detail": "Panier non trouvé."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"detail": f"Erreur : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
