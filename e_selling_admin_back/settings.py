@@ -78,6 +78,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'esellingadminback-production.up.railway.app',
     'fearless-amazement-production.up.railway.app',
+    'esellingadminfront-production.up.railway.app',
     'localhost',
     '127.0.0.1',
 ]
@@ -86,7 +87,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://localhost:4200',
     'https://esellingadminback-production.up.railway.app',
-    'https://fearless-amazement-production.up.railway.app'
+    'https://fearless-amazement-production.up.railway.app',
+    'https://esellingadminfront-production.up.railway.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -94,7 +96,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://192.168.43.174:8000',
     'http://localhost:4200',
     'https://esellingadminback-production.up.railway.app',
-    'https://fearless-amazement-production.up.railway.app'
+    'https://fearless-amazement-production.up.railway.app',
+    'https://esellingadminfront-production.up.railway.app'
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
