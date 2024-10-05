@@ -28,24 +28,57 @@ class CartView(APIView):
         try:
             # Récupérer le panier existant du client (s'il existe)
             cart = Cart.objects.get(client_id=client_id)
+
+            # Récupérer les articles existants dans le panier
+            existing_articles = cart.cartitem_set.values_list('article__member__organisation', flat=True)
+            existing_organisation = existing_articles[0] if existing_articles else None
+
+            for item in cart_items:
+                article_id = item.get('article')
+                quantity = item.get('quantity')
+                if not article_id or not quantity:
+                    return Response({'error': 'Données d\'article ou de quantité manquantes.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+                try:
+                    article = Article.objects.get(id=article_id)
+
+                    # Vérifier l'organisation de l'article
+                    article_organisation = article.member.organisation
+
+                    if existing_organisation and existing_organisation != article_organisation:
+                        # Si l'organisation diffère, vider le panier et créer un nouveau panier
+                        cart.cartitem_set.all().delete()  # Vider le panier existant
+                        cart.delete()  # Supprimer le panier existant
+                        cart = Cart.objects.create(client_id=client_id)  # Créer un nouveau panier
+                        existing_organisation = article_organisation  # Mettre à jour l'organisation
+
+                    # Ajouter l'article au panier
+                    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
+                    cart_item.quantity = quantity
+                    cart_item.save()
+
+                except Article.DoesNotExist:
+                    return Response({'error': f'Article {article_id} non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
         except Cart.DoesNotExist:
             # Créer un nouveau panier si le client n'en a pas encore
             cart = Cart.objects.create(client_id=client_id)
 
-        for item in cart_items:
-            article_id = item.get('article')
-            quantity = item.get('quantity')
-            if not article_id or not quantity:
-                return Response({'error': 'Données d\'article ou de quantité manquantes.'},
-                                status=status.HTTP_400_BAD_REQUEST)
+            for item in cart_items:
+                article_id = item.get('article')
+                quantity = item.get('quantity')
+                if not article_id or not quantity:
+                    return Response({'error': 'Données d\'article ou de quantité manquantes.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                article = Article.objects.get(id=article_id)
-                cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
-                cart_item.quantity = quantity
-                cart_item.save()
-            except Article.DoesNotExist:
-                return Response({'error': f'Article {article_id} non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+                try:
+                    article = Article.objects.get(id=article_id)
+                    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, article=article)
+                    cart_item.quantity = quantity
+                    cart_item.save()
+                except Article.DoesNotExist:
+                    return Response({'error': f'Article {article_id} non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CartSerializer(cart)
         return Response(serializer.data)
