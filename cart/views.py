@@ -82,9 +82,8 @@ class CartView(APIView):
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
-    def delete(self, request):
+    def delete(self, request, item_id):
         client_id = request.user.client.id
-        item_id = request.data.get('item_id')
 
         try:
             cart_item = CartItem.objects.get(id=item_id, cart__client_id=client_id)
@@ -94,4 +93,10 @@ class CartView(APIView):
             return Response(serializer.data)
         except CartItem.DoesNotExist:
             return Response({'error': 'L\'élément du panier est introuvable'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            # Log l'erreur pour le débogage
+            print(f"Erreur lors de la suppression de l'élément du panier : {e}")
+            return Response({'error': 'Erreur lors de la suppression de l\'élément'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
