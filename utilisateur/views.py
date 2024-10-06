@@ -65,6 +65,24 @@ class CurrentUserView(APIView):
         return Response(user_data, status=status.HTTP_200_OK)
 
 
+class CurrentClientView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_data = {
+            'id': user.id,
+            'email': user.email,
+            'username': user.username,
+            'phone': user.phone if hasattr(user, 'phone') else None,
+            'active': user.is_active,
+            'rule': user.rule if hasattr(user, 'rule') else None,
+            'logo': user.logo if hasattr(user, 'logo') else None,
+            'status': user.status if hasattr(user, 'status') else None
+        }
+        return Response(user_data)
+
+
 class ChangePasswordView(APIView):
     # permission_classes = [IsAuthenticated]
 
