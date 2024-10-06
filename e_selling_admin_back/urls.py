@@ -24,7 +24,7 @@ from passwordResetCode.views import SendPasswordResetCodeView, VerifyResetCodeVi
 from privilegies.views import PrivilegiesViewSet
 from rule.views import RoleViewSet
 from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView, CurrentUserView, \
-    ResendPasswordResetCodeView, ResetPasswordView, CurrentClientView
+    ResendPasswordResetCodeView, ResetPasswordView, CurrentClientView, UpdateClientView
 
 router = DefaultRouter()
 router.register(r'member', MemberViewSet)
@@ -49,6 +49,7 @@ urlpatterns = [
     path('resend-code/', ResendPasswordResetCodeView.as_view(), name='resend_code'),
     path('current-user/', CurrentUserView.as_view(), name='current_user'),
     path('current-client/', CurrentClientView.as_view(), name='current_client'),
+    path('client/<int:pk>/', UpdateClientView.as_view(), name='update_client'),
     path('cart/', CartView.as_view(), name='cart'),
     path('cart/<int:item_id>/', CartView.as_view(), name='cart-item-delete'),
     path('cart/passer_commande/', PasserCommandeView.as_view(), name='passer_commande'),

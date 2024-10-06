@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.http.response import Http404
 from django.utils.crypto import get_random_string
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +15,7 @@ from passwordResetCode.models import PasswordResetCode
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import Utilisateur
+from .models import Utilisateur, Client
 from .serializers import MyTokenObtainPairSerializer
 import logging
 
@@ -180,3 +181,21 @@ class ResendPasswordResetCodeView(APIView):
             return Response({"message": "Nouveau code envoyé à votre adresse e-mail."}, status=status.HTTP_200_OK)
         except Utilisateur.DoesNotExist:
             return Response({"error": "Utilisateur avec cet e-mail n'existe pas."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateClientView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        client = self.get_object(pk)
+        serializer = ClientSerializer(client, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_object(self, pk):
+        try:
+            return Client.objects.get(pk=pk)
+        except Client.DoesNotExist:
+            raise Http404
