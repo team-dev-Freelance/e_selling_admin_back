@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from client.serializers import ClientSerializer
 from organisation.serializers import OrganisationSerializer
 
 from passwordResetCode.models import PasswordResetCode
@@ -71,21 +72,12 @@ class CurrentClientView(APIView):
     def get(self, request):
         try:
             user = request.user
-            user_data = {
-                'id': user.id,
-                'email': user.email,
-                'username': user.username,
-                'phone': user.phone if hasattr(user, 'phone') else None,
-                'active': user.is_active,
-                # 'rule': user.rule if hasattr(user, 'rule') else None,
-                'logo': user.logo if hasattr(user, 'logo') else None,
-                'status': user.status if hasattr(user, 'status') else None
-            }
-            return Response(user_data)
+            serializer = ClientSerializer(user)
+            return Response(serializer.data)
         except Exception as e:
             logger.error(f"Erreur lors de la récupération des données utilisateur : {str(e)}")
-            return Response({"error": "Une erreur s'est produite lors de la récupération des données utilisateur."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response({"error": "Une erreur s'est produite lors de la récupération des données utilisateur."},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ChangePasswordView(APIView):

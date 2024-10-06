@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from rule.models import Role
+from rule.serializers import RoleSerializer
 from utilisateur.models import Client
 
 # from .models import Client
@@ -10,9 +11,19 @@ from rest_framework import serializers
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    rule = serializers.SerializerMethodField()
+    logo = serializers.SerializerMethodField()
+
     class Meta:
         model = Client
-        fields = ['username', 'email', 'phone', 'password']
+        fields = ['id', 'username', 'email', 'phone', 'rule', 'logo', 'status', 'active']
+
+    def get_rule(self, obj):
+        return RoleSerializer(obj.rule).data if obj.rule else None
+
+    def get_logo(self, obj):
+        # Vérifiez si l'objet a un logo et renvoyez l'URL
+        return obj.logo.url if obj.logo else None
 
     def validate_phone(self, value):
         """
