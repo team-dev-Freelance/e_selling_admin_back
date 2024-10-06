@@ -69,18 +69,23 @@ class CurrentClientView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        user_data = {
-            'id': user.id,
-            'email': user.email,
-            'username': user.username,
-            'phone': user.phone if hasattr(user, 'phone') else None,
-            'active': user.is_active,
-            'rule': user.rule if hasattr(user, 'rule') else None,
-            'logo': user.logo if hasattr(user, 'logo') else None,
-            'status': user.status if hasattr(user, 'status') else None
-        }
-        return Response(user_data)
+        try:
+            user = request.user
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                'phone': user.phone if hasattr(user, 'phone') else None,
+                'active': user.is_active,
+                'rule': user.rule if hasattr(user, 'rule') else None,
+                'logo': user.logo if hasattr(user, 'logo') else None,
+                'status': user.status if hasattr(user, 'status') else None
+            }
+            return Response(user_data)
+        except Exception as e:
+            logger.error(f"Erreur lors de la récupération des données utilisateur : {str(e)}")
+            return Response({"error": "Une erreur s'est produite lors de la récupération des données utilisateur."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class ChangePasswordView(APIView):
