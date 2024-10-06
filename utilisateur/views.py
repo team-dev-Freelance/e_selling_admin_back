@@ -77,7 +77,7 @@ class CurrentClientView(APIView):
                 'username': user.username,
                 'phone': user.phone if hasattr(user, 'phone') else None,
                 'active': user.is_active,
-                'rule': user.rule if hasattr(user, 'rule') else None,
+                # 'rule': user.rule if hasattr(user, 'rule') else None,
                 'logo': user.logo if hasattr(user, 'logo') else None,
                 'status': user.status if hasattr(user, 'status') else None
             }
