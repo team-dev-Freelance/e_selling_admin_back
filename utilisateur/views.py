@@ -189,3 +189,5 @@ class UpdateClientView(APIView):
             return Client.objects.get(pk=pk)
         except Client.DoesNotExist:
             raise Http404
+
+        
