@@ -16,7 +16,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ['id', 'username', 'email', 'phone', 'rule', 'logo', 'status', 'active']
+        fields = ['id', 'username', 'email', 'phone', 'rule', 'logo', 'password', 'status', 'active']
 
     def get_rule(self, obj):
         return RoleSerializer(obj.rule).data if obj.rule else None

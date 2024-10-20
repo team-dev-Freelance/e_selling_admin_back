@@ -190,4 +190,3 @@ class UpdateClientView(APIView):
         except Client.DoesNotExist:
             raise Http404
 
-        
