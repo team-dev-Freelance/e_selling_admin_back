@@ -11,6 +11,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
+import logging
+
+# Configurez un logger pour enregistrer les erreurs
+logger = logging.getLogger(__name__)
+
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
@@ -31,17 +36,14 @@ class ClientViewSet(viewsets.ModelViewSet):
         serializer = ClientSerializer(data=request.data)
 
         if serializer.is_valid():
-            # Récupérer les données validées
             username = serializer.validated_data['username']
             email = serializer.validated_data['email']
             phone = serializer.validated_data['phone']
             password = serializer.validated_data['password']
 
             try:
-                # Vérifier ou créer le rôle 'CLIENT'
                 role, created = Role.objects.get_or_create(role='CLIENT')
 
-                # Créer l'objet Client
                 client = Client(
                     username=username,
                     email=email,
@@ -54,15 +56,15 @@ class ClientViewSet(viewsets.ModelViewSet):
                 return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
 
             except ValidationError as e:
-                # Gérer les erreurs de validation spécifiques
+                logger.error(f"Erreur de validation : {str(e)}")  # Enregistrer l'erreur de validation
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
             except Exception as e:
-                # Gérer les autres exceptions générales
-                return Response({"detail": "Une erreur s'est produite lors de la création du client."},
+                # Enregistrer l'erreur générale pour comprendre le problème
+                logger.error(f"Erreur inattendue : {str(e)}")
+                return Response({"detail": f"Une erreur s'est produite : {str(e)}"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Si les données ne sont pas valides, renvoyer les erreurs de validation
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Un client par son id: client/profileClient/
