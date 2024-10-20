@@ -1,10 +1,12 @@
 from django.core.mail import send_mail
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 
 from cart.models import Cart
+from .Serializer import OrderSerializer
 from .models import Order, OrderItem
 from utilisateur.models import Member, Client
 
@@ -101,3 +103,28 @@ class PasserCommandeView(APIView):
             return Response({"detail": "Panier non trouvé."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"detail": f"Erreur : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class OrderHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        # Récupérer l'utilisateur connecté
+        client = self.request.user.client  # Assurez-vous que l'utilisateur a un profil Client
+        # Récupérer toutes les commandes associées à ce client
+        return Order.objects.filter(client=client).order_by('-date_command')
+
+    def get(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = self.serializer_class(queryset, many=True)  # Utilisez le serializer correctement
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Client.DoesNotExist:
+            return Response({"detail": "Client non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"detail": f"Erreur lors de la récupération des commandes : {str(e)}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
