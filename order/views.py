@@ -128,3 +128,33 @@ class OrderHistoryView(APIView):
             return Response({"detail": f"Erreur lors de la récupération des commandes : {str(e)}"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class OrderListByOrganizationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Récupérer le membre connecté
+            member = Member.objects.get(username=request.user.username)
+
+            # Vérifier si le membre a le rôle 'USER' (admin de l'organisation)
+            if member.rule.role != 'USER':
+                return Response({"detail": "Accès refusé : vous n'êtes pas autorisé à voir ces commandes."},
+                                status=status.HTTP_403_FORBIDDEN)
+
+            # Récupérer l'organisation à laquelle appartient le membre
+            organisation = member.organisation
+
+            # Récupérer toutes les commandes associées à cette organisation
+            orders = Order.objects.filter(client__member__organisation=organisation).order_by('-date_command')
+
+            # Sérialiser les commandes
+            serializer = OrderSerializer(orders, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Member.DoesNotExist:
+            return Response({"detail": "Membre non trouvé."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"detail": f"Erreur lors de la récupération des commandes : {str(e)}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
