@@ -24,10 +24,19 @@ class RoleViewSet(viewsets.ModelViewSet):
     #         self.permission_classes = [IsAdminOrUser]
     #     return super().get_permissions()
 
-    # Liste des roles a l'exception de admin: rule/except_admin/
+    # Liste des rôles à l'exception de l'admin: rule/except_admin/
     @action(detail=False, methods=['get'], url_path='except_admin')
     def list_except_admin(self, request):
-        roles = Role.objects.filter(active=True).exclude(role=Rule.ADMIN)
-        serializer = self.get_serializer(roles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            # Récupère les rôles actifs en excluant les admins
+            roles = Role.objects.filter(active=True).exclude(role=Rule.ADMIN)
+            serializer = self.get_serializer(roles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Role.DoesNotExist:
+            # Si aucune donnée n'est trouvée
+            return Response({'error': 'Aucun rôle trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            # Gestion des erreurs inattendues
+            return Response({'error': f'Erreur inattendue: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
