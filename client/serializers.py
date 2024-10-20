@@ -22,8 +22,15 @@ class ClientSerializer(serializers.ModelSerializer):
         return RoleSerializer(obj.rule).data if obj.rule else None
 
     def get_logo(self, obj):
-        # Vérifiez si l'objet a un logo et renvoyez l'URL
-        return obj.logo.url if obj.logo else None
+        # Si l'objet a un logo, renvoyer l'URL du fichier Cloudinary
+        if obj.logo:
+            try:
+                # Si le champ logo est un objet Cloudinary, il doit avoir un attribut url
+                return obj.logo.url
+            except AttributeError:
+                # Si logo est une chaîne (par ex. un chemin local ou un lien)
+                return obj.logo  # Renvoie la chaîne telle quelle
+        return None
 
     def validate_phone(self, value):
         """
