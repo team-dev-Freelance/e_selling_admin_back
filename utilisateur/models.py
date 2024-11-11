@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
         if 'rule' not in extra_fields:
             # Créez ou obtenez l'objet Role avec le privilège ALL
             role, created = Role.objects.get_or_create(
-                rule='ADMIN',
+                role='ADMIN',
                 active=True
             )
             if created:
