@@ -21,7 +21,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         # Assurez-vous que l'instance Privilegies pour 'ALL' existe
-        all_privilege, created = Privilegies.objects.get_or_create(privilege=Privilege.ALL)
+        #all_privilege, created = Privilegies.objects.get_or_create(privilege=Privilege.ALL)
 
         if 'rule' not in extra_fields:
             # Créez ou obtenez l'objet Role avec le privilège ALL
@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
                 active=True
             )
             if created:
-                role.privileges.set([all_privilege])
+                #role.privileges.set([all_privilege])
                 role.save()
             extra_fields['rule'] = role
         return self.create_user(username, password, **extra_fields)
