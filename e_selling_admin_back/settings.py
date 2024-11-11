@@ -175,9 +175,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
         'USER': os.environ.get('MYSQL_USER', 'root'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'oSzibzNlxNwGfUjhwyVMmouDBmbPaeQl'),
-        'HOST': os.environ.get('MYSQL_HOST', 'junction.proxy.rlwy.net'),
-        'PORT': os.environ.get('MYSQL_PORT', '42556'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu'),
+        'HOST': os.environ.get('MYSQL_HOST', 'autorack.proxy.rlwy.net'),
+        'PORT': os.environ.get('MYSQL_PORT', '34107'),
 
     }
 }
