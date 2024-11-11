@@ -76,7 +76,7 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'esellingadminback-production.up.railway.app',
+    'web-production-50f4e.up.railway.app',
     'fearless-amazement-production.up.railway.app',
     'esellingadminfront-production.up.railway.app',
     'localhost',
@@ -86,7 +86,7 @@ ALLOWED_HOSTS = [
 CORS_ALLOWED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://localhost:4200',
-    'https://esellingadminback-production.up.railway.app',
+    'https://web-production-50f4e.up.railway.app',
     'https://fearless-amazement-production.up.railway.app',
     'https://esellingadminfront-production.up.railway.app'
 ]
@@ -95,7 +95,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://192.168.43.174:8000',
     'http://localhost:4200',
-    'https://esellingadminback-production.up.railway.app',
+    'https://web-production-50f4e.up.railway.app',
     'https://fearless-amazement-production.up.railway.app',
     'https://esellingadminfront-production.up.railway.app'
 ]
