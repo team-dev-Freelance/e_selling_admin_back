@@ -165,28 +165,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'selling_db',  # Nom de votre base de données
-#         'USER': 'root',  # Votre nom d'utilisateur MySQL
-#         'PASSWORD': 'koire',  # Votre mot de passe MySQL
-#         'HOST': 'localhost',  # L'hôte de votre base de données
-#         'PORT': '3306',
-#     }
-# }
+ DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.mysql',
+         'NAME': 'selling_db',  # Nom de votre base de données
+         'USER': 'root',  # Votre nom d'utilisateur MySQL
+         'PASSWORD': '5iS+6}2eWFs9r%',  # Votre mot de passe MySQL
+         'HOST': '102.220.19.164',  # L'hôte de votre base de données
+         'PORT': '3306',
+     }
+ }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
-        'USER': os.environ.get('MYSQL_USER', 'root'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu'),
-        'HOST': os.environ.get('MYSQL_HOST', 'autorack.proxy.rlwy.net'),
-        'PORT': os.environ.get('MYSQL_PORT', '34107'),
-
-    }
-}
+#DATABASES = {
+    #'default': {
+      #  'ENGINE': 'django.db.backends.mysql',
+     #   'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
+    #    'USER': os.environ.get('MYSQL_USER', 'root'),
+   #     'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu'),
+  #      'HOST': os.environ.get('MYSQL_HOST', 'autorack.proxy.rlwy.net'),
+ #       'PORT': os.environ.get('MYSQL_PORT', '34107'),
+#
+ #   }
+#}
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (
