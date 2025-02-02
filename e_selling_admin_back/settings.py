@@ -165,7 +165,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 
- DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'selling_db',  # Nom de votre base de données
