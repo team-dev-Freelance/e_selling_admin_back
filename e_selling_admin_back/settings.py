@@ -21,6 +21,14 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 
+# SMS
+#ORANGE_CLIENT_ID = '82Ubo9gpMnQrDtTccL7Yz1cWsJhBO0ts'
+#ORANGE_CLIENT_SECRET = 'votre_client_secret'
+#ORANGE_PHONE_NUMBER = '237XXXXXXXX'
+#ORANGE_SMS_API_URL = 'https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B{{ORANGE_PHONE_NUMBER}}/requests'
+
+
+
 # Configuration
 cloudinary.config(
     cloud_name="doi8u5nki",
@@ -77,7 +85,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'web-production-50f4e.up.railway.app',
-    'fearless-amazement-production.up.railway.app',
     'esellingadminfront-production.up.railway.app',
     'localhost',
     '127.0.0.1',
@@ -87,7 +94,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://res.cloudinary.com',
     'http://localhost:4200',
     'https://web-production-50f4e.up.railway.app',
-    'https://fearless-amazement-production.up.railway.app',
     'https://esellingadminfront-production.up.railway.app'
 ]
 
@@ -96,7 +102,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://192.168.43.174:8000',
     'http://localhost:4200',
     'https://web-production-50f4e.up.railway.app',
-    'https://fearless-amazement-production.up.railway.app',
     'https://esellingadminfront-production.up.railway.app'
 ]
 
@@ -137,6 +142,7 @@ INSTALLED_APPS = [
     'utilisateur',
     'passwordResetCode',
     'corsheaders',
+    'smsorange'
 ]
 
 ROOT_URLCONF = 'e_selling_admin_back.urls'
