@@ -92,18 +92,21 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://res.cloudinary.com',
+    # 'https://res.cloudinary.com',
     'http://localhost:4200',
-    'https://web-production-50f4e.up.railway.app',
-    'https://esellingadminfront-production.up.railway.app'
+    'http://102.220.19.164:4200',
+    'http://102.220.19.164:8000'
+    # 'https://web-production-50f4e.up.railway.app',
+    # 'https://esellingadminfront-production.up.railway.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://res.cloudinary.com',
-    'http://192.168.43.174:8000',
+    # 'https://res.cloudinary.com',
+    # 'http://192.168.43.174:8000',
     'http://localhost:4200',
-    'https://web-production-50f4e.up.railway.app',
-    'https://esellingadminfront-production.up.railway.app',
+    'http://102.220.19.164:4200'
+    # 'https://web-production-50f4e.up.railway.app',
+    # 'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:8000'
 ]
 

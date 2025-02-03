@@ -33,4 +33,4 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                 data['logo'] = user.logo.url
 
             return data
-        
+
