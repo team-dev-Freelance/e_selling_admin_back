@@ -104,7 +104,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4200',
     'https://web-production-50f4e.up.railway.app',
     'https://esellingadminfront-production.up.railway.app',
-    'http://102.220.19.164:8080'
+    'http://102.220.19.164:8000'
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
