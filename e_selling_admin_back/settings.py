@@ -170,7 +170,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'selling_db',  # Nom de votre base de données
         'USER': 'root',  # Votre nom d'utilisateur MySQL
-        'PASSWORD': '5iS+6}2eWFs9r%',  # Votre mot de passe MySQL
+        'PASSWORD': 'koire',  # Votre mot de passe MySQL
         'HOST': '102.220.19.164',  # L'hôte de votre base de données
         'PORT': '3307',
     }
