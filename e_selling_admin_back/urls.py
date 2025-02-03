@@ -23,6 +23,7 @@ from organisation.views import OrganisationViewSet
 from passwordResetCode.views import SendPasswordResetCodeView, VerifyResetCodeView
 from privilegies.views import PrivilegiesViewSet
 from rule.views import RoleViewSet
+# from smsorange.views import test_envoi_sms
 from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView, CurrentUserView, \
     ResendPasswordResetCodeView, ResetPasswordView, CurrentClientView, UpdateClientView
 
@@ -55,9 +56,9 @@ urlpatterns = [
     path('cart/passer_commande/', PasserCommandeView.as_view(), name='passer_commande'),
     path('order-history/', OrderHistoryView.as_view(), name='order-history'),
     path('orders/organization/', OrderListByOrganizationView.as_view(), name='orders-by-organization'),
-    path('test-sms/', test_envoi_sms, name='test_envoi_sms'),
+    # path('test-sms/', test_envoi_sms, name='test_envoi_sms'),
     path('admin/', admin.site.urls),
-    path('sms/', include('sms_app.urls')),
+    # path('sms/', include('sms_app.urls')),
     path('', include(router.urls)),
 ]
 
