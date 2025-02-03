@@ -7,28 +7,30 @@ logger = logging.getLogger(__name__)
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
+    class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+        def validate(self, attrs):
+            username = attrs.get("username")
+            password = attrs.get("password")
 
-        # Authentifier l'utilisateur
-        user = authenticate(request=self.context.get('request'), username=username, password=password)
+            # Authentifier l'utilisateur
+            user = authenticate(request=self.context.get('request'), username=username, password=password)
 
-        logger.debug(f'Authenticating user: {username}, User object: {user}')
+            logger.debug(f'Authenticating user: {username}, User object: {user}')
 
-        if user is None:
-            logger.error('User authentication failed')
-            raise serializers.ValidationError({"detail": "Invalid credentials"})
+            if user is None:
+                logger.error('User authentication failed')
+                raise serializers.ValidationError({"detail": "Invalid credentials"})
 
-        attrs['user'] = user
-        data = super().validate(attrs)
-        data['rule'] = user.rule.role
-        data['user_id'] = user.id
+            attrs['user'] = user
+            data = super().validate(attrs)
+            data['rule'] = user.rule.role
+            data['user_id'] = user.id
 
-        if hasattr(user, 'member'):
-            data['organisation_id'] = user.member.organisation.id
+            if hasattr(user, 'member'):
+                data['organisation_id'] = user.member.organisation.id
 
-        if user.logo:
-            data['logo'] = user.logo.url
+            if user.logo:
+                data['logo'] = user.logo.url
 
-        return data
+            return data
+        
