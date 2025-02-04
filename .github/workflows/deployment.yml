@@ -85,10 +85,14 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 2222
           script: |
-            echo SECRET_KEY="${{ secrets.SECRET_KEY }}" > /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
-            echo DB_HOST="${{ secrets.DB_HOST }}" >> /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
-            echo DB_USERNAME="${{ secrets.DB_USERNAME }}" >> /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
-            echo DB_PASSWORD="${{ secrets.DB_PASSWORD }}" >> /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
-            echo DB_NAME="${{ secrets.DB_NAME }}" >> /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
+            cat <<EOF > /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=3306
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            EOF
+            
             docker compose -f /opt/applications/e_selling_admin_back/${{env.IMAGE}}/compose.yml up -d
-
+      
