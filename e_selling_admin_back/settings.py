@@ -173,11 +173,11 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'selling_db',  # Nom de votre base de données
-        'USER': 'root',  # Votre nom d'utilisateur MySQL
-        'PASSWORD': 'koire',  # Votre mot de passe MySQL
-        'HOST': '102.220.19.164',  # L'hôte de votre base de données
-        'PORT': '3307',
+        'NAME': 'selling_db',  # Nom de ta base de données
+        'USER': 'root',  # Utilisateur MySQL
+        'PASSWORD': 'koire',  # Mot de passe MySQL
+        'HOST': 'selling_admin_back',  # Nom du service dans Docker Compose
+        'PORT': '3306',  # Port par défaut de MySQL dans Docker
     }
 }
 

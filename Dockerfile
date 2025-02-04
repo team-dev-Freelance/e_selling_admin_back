@@ -27,4 +27,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8080
 
 # Définir la commande d'exécution unique (pour migrer puis lancer le serveur)
-CMD ["sh", "-c", "python3.10 manage.py migrate && gunicorn --bind 0.0.0.0:8080 102.220.19.164"]
+CMD ["sh", "-c", "python3.10 manage.py migrate && gunicorn --bind 0.0.0.0:8080 selling_admin_back.wsgi:application"]
