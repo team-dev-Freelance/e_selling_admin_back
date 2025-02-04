@@ -1,21 +1,20 @@
 services:
-  selling_back:
-    image: koire0312/my-django-app
-    container_name: selling_back
+  selling_admin_back:
+    image: mysql:latest
+    container_name: selling_admin_back
+    command:
+      --default-authentication-plugin = mysql_native_password
     restart: always
-    depends_on:
-      - selling_admin_back
-    networks:
-      - applications_network
     environment:
-      DJANGO_SETTINGS_MODULE: myproject.settings
-      DEBUG: 'False'
-      SECRET_KEY: ${SECRET_KEY}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "8080:8080"
+      MYSQL_DATABASE: selling_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: koire
+    networks:
+      - selling_admin_back_network
 
+  adminer:
+    image: adminer:4.8.1-standalone
+    container_name: selling_db
+    restart: always
+    networks:
+      - selling_admin_back_network
