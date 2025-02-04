@@ -6,23 +6,25 @@ services:
       --default-authentication-plugin = mysql_native_password
     restart: always
     environment:
-      MYSQL_DATABASE: selling_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: koire
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: 3306
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     networks:
-      - applications_network
+      - selling_admin_back_network
 
   adminer:
     image: adminer:4.8.1-standalone
     container_name: selling_db
     restart: always
     networks:
-      - applications_network
+      - selling_admin_back_network
 
 networks:
-  applications_network:
+  selling_admin_back_network:
     external: true
-    name: applications_network
+    name: selling_admin_back_network
 #  web:
 #    build:
 #      context: .
