@@ -1,0 +1,25 @@
+services:
+  selling_back:
+    image: koire0312/my-django-app
+    container_name: selling_back
+    restart: always
+      - applications_network
+    environment:
+      DJANGO_SETTINGS_MODULE: myproject.settings
+      DEBUG: 'False'
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+      # Variables pour la base de données
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: 3306
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    ports:
+      - "8080:8080"
+
+networks:
+  applications_network:
+    external: true
+    name: applications_network

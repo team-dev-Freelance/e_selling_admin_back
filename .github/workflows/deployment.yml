@@ -1,5 +1,8 @@
 name: deploy selling Back
 on: [push]
+env:
+  IMAGE: my-django-app
+  VERSION: 0.0.1
 jobs:
   create-folder:
     name: create-folder
@@ -13,7 +16,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 2222
           script: |
-            mkdir -p /opt/applications/e_selling_admin_back/
+            mkdir -p /opt/applications/e_selling_admin_back/${{env.IMAGE}}/
             ls -al /opt/applications/e_selling_admin_back/
 
   generate-image:
@@ -22,10 +25,10 @@ jobs:
     needs: create-folder
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Assure-toi d'utiliser la version correcte
+        uses: actions/checkout@v2
 
       - name: Set up Python version
-        uses: actions/setup-python@v2  # Remplace avec l'action officielle pour configurer Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.10'
 
@@ -56,3 +59,34 @@ jobs:
         run: |
           docker tag my-django-app:latest koire0312/my-django-app:latest
           docker push koire0312/my-django-app:latest
+
+
+  run-container:
+    name: run-container
+    runs-on: ubuntu-latest
+    needs: ['create-folder', 'generate-image']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 2222
+          source: "compose.yml"
+          target: /opt/applications/e_selling_admin_back/${{env.IMAGE}}/
+      - name: execute commands to run container
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 2222
+          script: |
+            echo DB_HOST = "${{ secrets.DB_HOST }}" >>  /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
+            echo DB_USERNAME = "${{ secrets.DB_USERNAME }}" >>  /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
+            echo DB_PASSWORD = "${{ secrets.DB_PASSWORD }}" >>  /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
+            docker compose -f /opt/applications/e_selling_admin_back/${{env.IMAGE}}/compose.yml up -d
+
