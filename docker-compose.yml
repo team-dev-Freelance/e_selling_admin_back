@@ -1,25 +1,38 @@
-version: '3.8'
-
 services:
-  db:
+  selling_admin_back:
     image: mysql:latest
+    container_name: selling_admin_back
+    command:
+      --default-authentication-plugin = mysql_native_password
+    restart: always
     environment:
-      MYSQL_DATABASE: railway
+      MYSQL_DATABASE: selling_db
       MYSQL_USER: root
-      MYSQL_PASSWORD: EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu
-    volumes:
-      - db-data:/var/lib/mysql
+      MYSQL_PASSWORD: koire
+    networks:
+      - applications_network
 
-  web:
-    build:
-      context: .
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=mysql://root:EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu@db:3306/railway
-    depends_on:
-      - db
+  adminer:
+    image: adminer:4.8.1-standalone
+    container_name: selling_db
+    restart: always
+    networks:
+      - applications_network
 
-volumes:
-  db-data:
+networks:
+  applications_network:
+    external: true
+    name: applications_network
+#  web:
+#    build:
+#      context: .
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - DATABASE_URL=mysql://root:koire:3307/selling_db
+#    depends_on:
+#      - db
+#
+#volumes:
+#  db-data:
 

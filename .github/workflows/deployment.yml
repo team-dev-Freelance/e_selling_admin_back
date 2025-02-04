@@ -1,0 +1,17 @@
+name: deploy selling Back
+on: [push]
+jobs:
+  create-folder:
+    name: create-folder
+    runs-on: ubuntu-latest
+    steps:
+      - name: execute commands
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 2222
+          script: |
+            mkdir /opt/applications/e_selling_admin_back/
+            ls -al /opt/applications/e_selling_admin_back/
