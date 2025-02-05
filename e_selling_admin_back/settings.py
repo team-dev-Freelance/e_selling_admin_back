@@ -185,28 +185,28 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 # }
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'selling_db',  # Nom de ta base de données
+#         'USER': 'root',  # Utilisateur MySQL
+#         'PASSWORD': 'koire',  # Mot de passe MySQL
+#         'HOST': '102.220.19.164',  # Nom du service dans Docker Compose
+#         'PORT': '3307',  # Port par défaut de MySQL dans Docker
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'selling_db',  # Nom de ta base de données
-        'USER': 'root',  # Utilisateur MySQL
-        'PASSWORD': 'koire',  # Mot de passe MySQL
-        'HOST': '102.220.19.164',  # Nom du service dans Docker Compose
-        'PORT': '3307',  # Port par défaut de MySQL dans Docker
-    }
-}
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'railway',
+       'USER': 'root',
+       'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
+       'HOST': 'autorack.proxy.rlwy.net',
+       'PORT': '13977',
 
-#DATABASES = {
-    #'default': {
-      #  'ENGINE': 'django.db.backends.mysql',
-     #   'NAME': os.environ.get('MYSQL_DATABASE', 'railway'),
-    #    'USER': os.environ.get('MYSQL_USER', 'root'),
-   #     'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'EMVCCgtMxYeLMRSEnfPNWlBIvFxZvQMu'),
-  #      'HOST': os.environ.get('MYSQL_HOST', 'autorack.proxy.rlwy.net'),
- #       'PORT': os.environ.get('MYSQL_PORT', '34107'),
-#
- #   }
-#}
+   }
+}
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (
