@@ -173,28 +173,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USERNAME'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
-
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'selling_db',  # Nom de ta base de données
-#         'USER': 'root',  # Utilisateur MySQL
-#         'PASSWORD': 'koire',  # Mot de passe MySQL
-#         'HOST': 'selling_admin_back',  # Nom du service dans Docker Compose
-#         'PORT': '3307',  # Port par défaut de MySQL dans Docker
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USERNAME'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'selling_db',  # Nom de ta base de données
+        'USER': 'root',  # Utilisateur MySQL
+        'PASSWORD': 'koire',  # Mot de passe MySQL
+        'HOST': '102.220.19.164',  # Nom du service dans Docker Compose
+        'PORT': '3307',  # Port par défaut de MySQL dans Docker
+    }
+}
 
 #DATABASES = {
     #'default': {

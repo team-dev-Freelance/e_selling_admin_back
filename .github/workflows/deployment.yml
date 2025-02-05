@@ -174,12 +174,12 @@ jobs:
           script: |
             cat <<EOF > /opt/applications/e_selling_admin_back/${{env.IMAGE}}/.env
             DEBUG=False
-            SECRET_KEY=django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
-            DB_HOST=102.220.19.164
-            DB_PORT=3307
-            DB_NAME=selling_db
-            DB_USERNAME=root
-            DB_PASSWORD=koire
+            SECRET_KEY=${SECRET_KEY}
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
+            DB_NAME: ${DB_NAME}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
             EOF
 
             cd /opt/applications/e_selling_admin_back/${{env.IMAGE}}
