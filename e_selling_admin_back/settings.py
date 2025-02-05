@@ -97,7 +97,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://102.220.19.164:4200',
     'http://102.220.19.164:8000',
-    'https://web-production-1ab04.up.railway.app/'
+    'https://web-production-1ab04.up.railway.app'
     # 'https://web-production-50f4e.up.railway.app',
     # 'https://esellingadminfront-production.up.railway.app'
 ]
@@ -110,7 +110,7 @@ CSRF_TRUSTED_ORIGINS = [
     # 'https://web-production-50f4e.up.railway.app',
     # 'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:8000',
-    'https://web-production-1ab04.up.railway.app/'
+    'https://web-production-1ab04.up.railway.app'
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True

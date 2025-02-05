@@ -57,7 +57,7 @@ urlpatterns = [
     path('order-history/', OrderHistoryView.as_view(), name='order-history'),
     path('orders/organization/', OrderListByOrganizationView.as_view(), name='orders-by-organization'),
     # path('test-sms/', test_envoi_sms, name='test_envoi_sms'),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     # path('sms/', include('sms_app.urls')),
     path('', include(router.urls)),
 ]
