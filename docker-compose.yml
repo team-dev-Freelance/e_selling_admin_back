@@ -8,13 +8,18 @@ services:
     environment:
       MYSQL_DATABASE: selling_db
       MYSQL_USER: root
-      MYSQL_PASSWORD: koire
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
-      - selling_admin_back_network
+      - applications_network
 
   adminer:
     image: adminer:4.8.1-standalone
     container_name: selling_db
     restart: always
     networks:
-      - selling_admin_back_network
+      - applications_network
+
+networks:
+  applications-network:
+    external: true
+    name: applications-network
