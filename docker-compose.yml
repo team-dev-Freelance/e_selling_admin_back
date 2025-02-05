@@ -1,25 +1,59 @@
+#services:
+#  selling_admin_back:
+#    image: mysql:latest
+#    container_name: selling_admin_back
+#    command:
+#      --default-authentication-plugin = mysql_native_password
+#    restart: always
+#    environment:
+#      MYSQL_DATABASE: selling_db
+#      MYSQL_USER: root
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#    networks:
+#      - applications_network
+#
+#  adminer:
+#    image: adminer:4.8.1-standalone
+#    container_name: selling_db
+#    restart: always
+#    networks:
+#      - applications_network
+#
+#networks:
+#  applications-network:
+#    external: true
+#    name: applications-network
 services:
-  selling_admin_back:
-    image: mysql:latest
-    container_name: selling_admin_back
-    command:
-      --default-authentication-plugin = mysql_native_password
-    restart: always
+  selling_back:
+    build: .
+    container_name: selling_back
     environment:
-      MYSQL_DATABASE: selling_db
-      MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
     networks:
       - applications_network
 
-  adminer:
-    image: adminer:4.8.1-standalone
-    container_name: selling_db
+  db:
+    image: mysql:8
+    container_name: mysql_db
     restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
     networks:
       - applications_network
 
 networks:
-  applications-network:
-    external: true
-    name: applications-network
+  applications_network:
+    driver: bridge
