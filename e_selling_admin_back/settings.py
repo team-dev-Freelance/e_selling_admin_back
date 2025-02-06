@@ -79,12 +79,11 @@ EMAIL_HOST_PASSWORD = 'npdd sdvc moaq ozal '
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8'
-DB_HOST = '102.220.19.164'
-DB_PORT = 3307
-DB_NAME = 'selling_db'
-DB_USERNAME = 'root'
-DB_PASSWORD = 'koire'
-
+DB_NAME='railway'
+DB_HOST='autorack.proxy.rlwy.net'
+DB_PORT=13977
+DB_PASSWORD='pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM'
+DB_USERNAME='root'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -189,28 +188,28 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 # }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'selling_db',
-        'USER': 'root',
-        'PASSWORD': 'koire',
-        'HOST': '102.220.19.164',
-        'PORT': '3307',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'railway',
-#        'USER': 'root',
-#        'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
-#        'HOST': 'autorack.proxy.rlwy.net',
-#        'PORT': '13977',
-#
-#    }
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'selling_db',
+#         'USER': 'root',
+#         'PASSWORD': 'koire',
+#         'HOST': '102.220.19.164',
+#         'PORT': '3307',
+#     }
 # }
+
+DATABASES = {
+    'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'railway',
+       'USER': 'root',
+       'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
+       'HOST': 'autorack.proxy.rlwy.net',
+       'PORT': '13977',
+
+   }
+}
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (
