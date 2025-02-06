@@ -84,20 +84,19 @@ SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'web-production-50f4e.up.railway.app',
-    'esellingadminfront-production.up.railway.app',
     'localhost',
     '127.0.0.1',
     '102.220.19.164',
-    'web-production-1ab04.up.railway.app'
+    'web-production-1ab04.up.railway.app',
+    'esellingadminfront-production.up.railway.app'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     # 'https://res.cloudinary.com',
     'http://localhost:4200',
-    'http://102.220.19.164:4200',
-    'http://102.220.19.164:8000',
-    'https://web-production-1ab04.up.railway.app'
+    'http://102.220.19.164:8082',
+    'https://web-production-1ab04.up.railway.app',
+    'https://esellingadminfront-production.up.railway.app'
     # 'https://web-production-50f4e.up.railway.app',
     # 'https://esellingadminfront-production.up.railway.app'
 ]
@@ -106,11 +105,11 @@ CSRF_TRUSTED_ORIGINS = [
     # 'https://res.cloudinary.com',
     # 'http://192.168.43.174:8000',
     'http://localhost:4200',
-    'http://102.220.19.164:4200'
     # 'https://web-production-50f4e.up.railway.app',
     # 'https://esellingadminfront-production.up.railway.app',
-    'http://102.220.19.164:8000',
-    'https://web-production-1ab04.up.railway.app'
+    'http://102.220.19.164:8082',
+    'https://web-production-1ab04.up.railway.app',
+    'https://esellingadminfront-production.up.railway.app'
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
