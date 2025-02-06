@@ -185,28 +185,28 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 # }
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'selling_db',  # Nom de ta base de données
-#         'USER': 'root',  # Utilisateur MySQL
-#         'PASSWORD': 'koire',  # Mot de passe MySQL
-#         'HOST': '102.220.19.164',  # Nom du service dans Docker Compose
-#         'PORT': '3307',  # Port par défaut de MySQL dans Docker
-#     }
-# }
-
 DATABASES = {
     'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'railway',
-       'USER': 'root',
-       'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
-       'HOST': 'autorack.proxy.rlwy.net',
-       'PORT': '13977',
-
-   }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'selling_db',
+        'USER': 'root',
+        'PASSWORD': 'koire',
+        'HOST': '102.220.19.164',
+        'PORT': '3307',
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'railway',
+#        'USER': 'root',
+#        'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
+#        'HOST': 'autorack.proxy.rlwy.net',
+#        'PORT': '13977',
+#
+#    }
+# }
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (

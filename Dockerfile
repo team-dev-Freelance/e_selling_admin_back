@@ -6,12 +6,23 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Installer les dépendances système nécessaires pour mysqlclient
-RUN apt-get update \
-    && apt-get install -y \
+#RUN apt-get update \
+#    && apt-get install -y \
+#    build-essential \
+#    pkg-config \
+#    libmariadb-dev \
+#    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
     build-essential \
-    pkg-config \
+    python3-dev \
     libmariadb-dev \
+    libmariadb-dev-compat \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
+
+
+
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -21,7 +32,7 @@ COPY requirements.txt /app/
 COPY . /app/
 
 # Installer les dépendances Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --timeout=120 --no-cache-dir -r requirements.txt
 
 # Exposer le port sur lequel l'application va tourner
 EXPOSE 8082

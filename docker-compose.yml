@@ -50,7 +50,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "13977:3306"
+      - "3307:3306"
     networks:
       - applications_network
 
