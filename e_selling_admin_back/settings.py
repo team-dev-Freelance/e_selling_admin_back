@@ -79,6 +79,11 @@ EMAIL_HOST_PASSWORD = 'npdd sdvc moaq ozal '
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^k#(#tk5!gslwc=aj6x=vubs5n%m-+)u(+$gn*texj50p8aiv8'
+DB_HOST = '102.220.19.164'
+DB_PORT = 3307
+DB_NAME = 'selling_db'
+DB_USERNAME = 'root'
+DB_PASSWORD = 'koire'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
