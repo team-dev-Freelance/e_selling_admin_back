@@ -1,14 +1,10 @@
-import os
-
 from django.db import models
+
 from categorie.models import Categorie
 from utilisateur.models import Member
 
-
-# from member.models import Member
-
-
 from cloudinary.models import CloudinaryField
+# from member.models import Member
 
 
 class Article(models.Model):
@@ -17,7 +13,7 @@ class Article(models.Model):
     active = models.BooleanField(default=True)
     category = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=False)
-    logo = models.ImageField(upload_to='photos/', default='media/photos/logo.jpeg')
+    logo = models.CloudinaryField(upload_to='photos/', default='media/photos/logo.jpeg')
     # logo_name = models.CharField(max_length=255, blank=True)
 
     def __str__(self):

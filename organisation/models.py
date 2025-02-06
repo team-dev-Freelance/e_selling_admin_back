@@ -10,7 +10,7 @@ class Organisation(models.Model):
     createDate = models.DateField(auto_now_add=True, editable=False)
     active = models.BooleanField(default=True)
     phone = models.CharField(max_length=20, default='')
-    logo = models.ImageField(upload_to='photos/', default='media/photos/logo.jpeg')
+    logo = models.CloudinaryField(upload_to='photos/', default='media/photos/logo.jpeg')
     # logo = models.ImageField(upload_to='photos/', default='default_logo.png')
     # logo_name = models.CharField(max_length=255, blank=True)
     #
