@@ -1,6 +1,6 @@
 services:
   selling_back:
-    image: koire0312/my-django-app
+    image: koire0312/my-django-app:v1.1
     container_name: selling_back
     restart: always
     depends_on:

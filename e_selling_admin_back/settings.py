@@ -85,47 +85,34 @@ DB_PORT=13977
 DB_PASSWORD='pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM'
 DB_USERNAME='root'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '102.220.19.164',
-    'web-production-1ab04.up.railway.app',
-    'esellingadminfront-production.up.railway.app'
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,102.220.19.164").split(",")
 
 CORS_ALLOWED_ORIGINS = [
-    # 'https://res.cloudinary.com',
     'http://localhost:4200',
     'http://102.220.19.164:8082',
     'https://web-production-1ab04.up.railway.app',
-    'https://esellingadminfront-production.up.railway.app'
-    # 'https://web-production-50f4e.up.railway.app',
-    # 'https://esellingadminfront-production.up.railway.app'
+    'http://102.220.19.164:4200',
+    'https://esellingadminfront-production.up.railway.app',
+    'http://102.220.19.164:3000',
+    'http://127.0.0.1:8000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    # 'https://res.cloudinary.com',
-    # 'http://192.168.43.174:8000',
+    'http://102.220.19.164:3000',
     'http://localhost:4200',
-    # 'https://web-production-50f4e.up.railway.app',
-    # 'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:8082',
     'https://web-production-1ab04.up.railway.app',
-    'https://esellingadminfront-production.up.railway.app'
+    'https://esellingadminfront-production.up.railway.app',
+    'http://102.220.19.164:4200',
+    'http://127.0.0.1:8000',
 ]
-
-# CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOW_HEADERS = ['content-type', 'authorization']
-# CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 APPEND_SLASH = False
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Pour utiliser User et Member
-    # Ajoutez d'autres backends si nécessaire
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 # Application definition
@@ -187,29 +174,40 @@ WSGI_APPLICATION = 'e_selling_admin_back.wsgi.application'
 #     }
 # }
 
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'selling_db',
 #         'USER': 'root',
 #         'PASSWORD': 'koire',
-#         'HOST': '102.220.19.164',
-#         'PORT': '3307',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
 #     }
 # }
 
+
 DATABASES = {
     'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'railway',
-       'USER': 'root',
-       'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
-       'HOST': 'autorack.proxy.rlwy.net',
-       'PORT': '13977',
-
-   }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'selling_db',
+        'USER': 'root',
+        'PASSWORD': 'koire',
+        'HOST': '102.220.19.164',
+        'PORT': '3307',
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'railway',
+#        'USER': 'root',
+#        'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
+#        'HOST': 'autorack.proxy.rlwy.net',
+#        'PORT': '13977',
+#
+#    }
+# }
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -248,7 +246,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Déplacez-le ici si ce n'est pas déjà fait
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
