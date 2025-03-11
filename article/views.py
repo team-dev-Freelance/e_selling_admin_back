@@ -47,8 +47,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
                 categorie_id = request.data.get('category_id')
                 category_instance = Categorie.objects.get(id=categorie_id)
-
-                article = serializer.save(member=member, category=category_instance)
+                logo = request.FILES.get('logo', None)
+                article = serializer.save(member=member, category=category_instance, logo=logo)
                 return Response(ArticleSerializer(article).data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Categorie.DoesNotExist:
