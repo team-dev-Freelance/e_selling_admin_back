@@ -38,4 +38,4 @@ RUN pip install --timeout=120 --no-cache-dir -r requirements.txt
 EXPOSE 8082
 
 # Définir la commande d'exécution unique (pour migrer puis lancer le serveur)
-CMD ["sh", "-c", "python3.10 manage.py migrate && gunicorn --bind 0.0.0.0:8082 e_selling_admin_back.wsgi:application"]
+CMD ["sh", "-c", "python3.10 manage.py migrate && gunicorn --bind 0.0.0.0:8000 e_selling_admin_back.wsgi:application"]

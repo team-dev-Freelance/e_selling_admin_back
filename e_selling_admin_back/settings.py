@@ -97,6 +97,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:3000',
     'http://127.0.0.1:8000',
+    'http://localhost:46759',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -107,6 +108,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:4200',
     'http://127.0.0.1:8000',
+    'http://localhost:46759',
 ]
 
 APPEND_SLASH = False
@@ -194,6 +196,10 @@ DATABASES = {
         'PASSWORD': 'koire',
         'HOST': '102.220.19.164',
         'PORT': '3307',
+        'OPTIONS': {
+            'connect_timeout': 60,  # Augmenter le timeout de connexion
+            'init_command': "SET SESSION wait_timeout = 28800",
+        }
     }
 }
 
