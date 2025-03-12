@@ -14,9 +14,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = ['id', 'label', 'price', 'category_id', 'member', 'logo', 'category']
 
-    def get_logo_url(self, obj):
-        if obj.logo:
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.logo.url) if request else obj.logo.url
-        return None
+    # def get_logo_url(self, obj):
+    #     if obj.logo:
+    #         request = self.context.get('request')
+    #         return request.build_absolute_uri(obj.logo.url) if request else obj.logo.url
+    #     return None
 
