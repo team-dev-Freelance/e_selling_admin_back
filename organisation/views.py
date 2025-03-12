@@ -35,11 +35,42 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = OrganisationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # serializer = OrganisationSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Récupérer les données de la requête
+        logo = request.FILES.get('logo')
+        label = request.data.get('label')
+        description = request.data.get('description')
+        phone = request.data.get('phone')
+
+        # Vérifier si l'organisation existe déjà
+        if Organisation.objects.filter(label=label).exists():
+            return Response(
+                {'message': 'L\'organisation existe déjà.', 'status': 'error'},
+                status=status.HTTP_200_OK
+            )
+
+        # Créer une nouvelle instance d'Organisation
+        organisation = Organisation(
+            logo=logo,
+            label=label,
+            description=description,
+            phone=phone
+        )
+
+        # Enregistrer l'organisation dans la base de données
+        organisation.save()
+
+        # Préparer les données à renvoyer
+        response_data = {
+            'message': 'Organisation créée avec succès',
+            'status': 'success'
+        }
+
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
         organisation = get_object_or_404(Organisation, pk=pk)
@@ -47,12 +78,41 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        organisation = get_object_or_404(Organisation, pk=pk)
-        serializer = OrganisationSerializer(organisation, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # organisation = get_object_or_404(Organisation, pk=pk)
+        # serializer = OrganisationSerializer(organisation, data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Vérifier si l'organisation existe
+        try:
+            organisation = Organisation.objects.get(pk=pk)
+        except Organisation.DoesNotExist:
+            return Response(
+                {'message': 'Organisation non trouvée.', 'status': 'error'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Récupérer les données de la requête
+        label = request.data.get('label', organisation.label)
+        description = request.data.get('description', organisation.description)
+        phone = request.data.get('phone', organisation.phone)
+
+        # Mettre à jour les champs de l'organisation
+        organisation.label = label
+        organisation.description = description
+        organisation.phone = phone
+
+        # Enregistrer les modifications
+        organisation.save()
+
+        # Préparer les données à renvoyer
+        response_data = {
+            'message': 'Organisation mise à jour avec succès',
+            'status': 'success',
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, pk=None):
         organisation = get_object_or_404(Organisation, pk=pk)
@@ -77,6 +137,8 @@ class OrganisationViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='list_members_active')
     def list_members_active(self, request):
+        return Response({"detail": "Aucune organisation associée à cet utilisateur."},
+                            status=status.HTTP_200_OK)
         member = getattr(request.user, 'member', None)
         if member:
             organisation = member.organisation
@@ -155,3 +217,30 @@ class OrganisationViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_404_NOT_FOUND)
         return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
+import os
+from django.conf import settings
+
+
+def serve_image(request):
+    # Nom du fichier image passé en paramètre GET
+    image_name = request.GET.get('image')
+
+    # Chemin complet vers le fichier image
+    image_name = image_name[1:] 
+    image_path = os.path.join(settings.BASE_DIR, image_name)
+
+    # Vérifie si le fichier image existe et s'il est dans le répertoire autorisé
+    if os.path.exists(image_path) and os.path.commonpath([image_path, settings.MEDIA_ROOT]) == settings.MEDIA_ROOT:
+        with open(image_path, 'rb') as image_file:
+            content_type = 'image/jpeg'  # Valeur par défaut
+            if image_name.endswith('.png'):
+                content_type = 'image/png'
+            elif image_name.endswith('.gif'):
+                content_type = 'image/gif'
+            # Ajoutez d'autres types si nécessaire
+
+            response = HttpResponse(image_file.read(), content_type=content_type)
+            response['Content-Disposition'] = f'inline; filename="{os.path.basename(image_name)}"'
+            return response
+    else:
+        return HttpResponse('L\'image demandée n\'existe pas', status=404)

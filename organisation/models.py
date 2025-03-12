@@ -22,10 +22,10 @@ class Organisation(models.Model):
     def __str__(self):
         return self.label
 
-    def clean(self):
-        super().clean()
-        if not self.phone.startswith(('65', '67', '68', '69')):
-            raise ValueError('Le numéro doit commencer par 65, 67, 68 ou 69.')
-        if len(self.phone) != 9 or not self.phone.isdigit():
-            raise ValueError('Le numéro de téléphone doit avoir 9 chiffres.')
+    # def clean(self):
+    #     super().clean()
+    #     if not self.phone.startswith(('65', '67', '68', '69')):
+    #         raise ValueError('Le numéro doit commencer par 65, 67, 68 ou 69.')
+    #     if len(self.phone) != 9 or not self.phone.isdigit():
+    #         raise ValueError('Le numéro de téléphone doit avoir 9 chiffres.')
 

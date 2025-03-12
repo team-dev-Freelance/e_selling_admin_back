@@ -27,6 +27,7 @@ from rule.views import RoleViewSet
 from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView, CurrentUserView, \
     ResendPasswordResetCodeView, ResetPasswordView, CurrentClientView, UpdateClientView
 
+from organisation import views as organisationView
 router = DefaultRouter()
 router.register(r'member', MemberViewSet)
 router.register(r'organisation', OrganisationViewSet)
@@ -59,6 +60,7 @@ urlpatterns = [
     # path('test-sms/', test_envoi_sms, name='test_envoi_sms'),
     # path('admin/', admin.site.urls),
     # path('sms/', include('sms_app.urls')),
+    path('get-image', organisationView.serve_image),
     path('', include(router.urls)),
 ]
 

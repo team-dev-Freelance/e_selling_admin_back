@@ -40,22 +40,79 @@ class ArticleViewSet(viewsets.ModelViewSet):
     # Création d'un article: article/
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data, context={'request': request})
-            if serializer.is_valid():
-                user = self.request.user
-                member = user.member
+            # Récupérer les données de la requête
+            categorie_id = request.data.get('category_id')
+            label = request.data.get('label')
+            price = request.data.get('price')
+            logo = request.FILES.get('logo')
 
-                categorie_id = request.data.get('category_id')
+            # Vérifier si tous les champs nécessaires sont présents
+            if not all([categorie_id, label, price]):
+                return Response({
+                    "message": "Tous les champs (category_id, label, price) sont requis.",
+                    "status": "error"
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Vérifier si la catégorie existe
+            try:
                 category_instance = Categorie.objects.get(id=categorie_id)
-                logo = request.FILES.get('logo', None)
-                article = serializer.save(member=member, category=category_instance, logo=logo)
-                return Response(ArticleSerializer(article).data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Categorie.DoesNotExist:
-            return Response({"detail": "Catégorie non trouvée."}, status=status.HTTP_400_BAD_REQUEST)
+            except Categorie.DoesNotExist:
+                return Response({
+                    "message": "Catégorie non trouvée.",
+                    "status": "error"
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Vérifier que le prix est un nombre valide
+            try:
+                price = float(price)  # Convertir le prix en float
+            except ValueError:
+                return Response({
+                    "message": "Le prix doit être un nombre valide.",
+                    "status": "error"
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Créer une nouvelle instance d'Article
+            article = Article(
+                member=request.user.member,  # Récupérer le membre de l'utilisateur
+                category=category_instance,
+                label=label,
+                price=price,
+                logo=logo
+            )
+
+            # Enregistrer l'article dans la base de données
+            article.save()
+
+            # Préparer la réponse
+            response_data = {
+                "message": "Article créé avec succès.",
+                "status": "success",
+            }
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+
         except Exception as e:
-            return Response({"detail": f"Erreur lors de la création de l'article : {str(e)}"},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                "message": f"Erreur lors de la création de l'article : {str(e)}",
+                "status": "error"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # try:
+        #     serializer = self.get_serializer(data=request.data, context={'request': request})
+        #     if serializer.is_valid():
+        #         user = self.request.user
+        #         member = user.member
+
+        #         categorie_id = request.data.get('category_id')
+        #         category_instance = Categorie.objects.get(id=categorie_id)
+        #         logo = request.FILES.get('logo', None)
+        #         article = serializer.save(member=member, category=category_instance, logo=logo)
+        #         return Response(ArticleSerializer(article).data, status=status.HTTP_201_CREATED)
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # except Categorie.DoesNotExist:
+        #     return Response({"detail": "Catégorie non trouvée."}, status=status.HTTP_400_BAD_REQUEST)
+        # except Exception as e:
+        #     return Response({"detail": f"Erreur lors de la création de l'article : {str(e)}"},
+        #                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # Un article par son id: article/{id}/
     def retrieve(self, request, pk=None):

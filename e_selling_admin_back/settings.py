@@ -13,13 +13,13 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+# import cloudinary
+# import cloudinary.uploader
+# import cloudinary.api
 
-import cloudinary
-import cloudinary.uploader
-from cloudinary.utils import cloudinary_url
+# import cloudinary
+# import cloudinary.uploader
+# from cloudinary.utils import cloudinary_url
 
 # SMS
 #ORANGE_CLIENT_ID = '82Ubo9gpMnQrDtTccL7Yz1cWsJhBO0ts'
@@ -196,22 +196,22 @@ DATABASES = {
         'PASSWORD': 'koire',
         'HOST': '102.220.19.164',
         'PORT': '3307',
-        'OPTIONS': {
-            'connect_timeout': 60,  # Augmenter le timeout de connexion
-            'init_command': "SET SESSION wait_timeout = 28800",
-        }
+        # 'OPTIONS': {
+        #     'connect_timeout': 60,  # Augmenter le timeout de connexion
+        #     'init_command': "SET SESSION wait_timeout = 28800",
+        # }
     }
 }
 
 # DATABASES = {
 #     'default': {
 #        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'railway',
+#        'NAME': 'selling_db',
 #        'USER': 'root',
-#        'PASSWORD': 'pItdcCsnoziKMtuCpnZvyDwvNjWLxJVM',
-#        'HOST': 'autorack.proxy.rlwy.net',
-#        'PORT': '13977',
-#
+#        'PASSWORD': '',
+#        'HOST': 'localhost',
+#        'PORT': '3306',
+
 #    }
 # }
 
