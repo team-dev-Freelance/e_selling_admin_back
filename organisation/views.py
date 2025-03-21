@@ -244,3 +244,25 @@ def serve_image(request):
             return response
     else:
         return HttpResponse('L\'image demandée n\'existe pas', status=404)
+
+from django.db import transaction
+from categorie.models import Categorie
+from article.models import Article
+from organisation.models import Organisation
+
+def vider_tables(request):
+        # Vider la table Article
+        Article.objects.all().delete()
+        
+        # Vider la table Categorie
+        Categorie.objects.all().delete()
+          # Vider la table Organisation
+        Organisation.objects.all().delete()
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Organisation
+
+def recuperer_et_supprimer_organisation(request):
+    # Récupérer l'organisation par ID
+    organisation = get_object_or_404(Categorie, id=10)
+
+    organisation.delete()
