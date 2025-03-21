@@ -66,6 +66,7 @@ urlpatterns = [
     # path('', include(router.urls)),
     #Category route
     path('categorie/', include('categorie.urls')),
+    path('rule/', include('rule.urls')),
 
 ]
 

@@ -1,34 +1,110 @@
-from rest_framework import viewsets
 
-from permissions import IsAdmin, IsAdminOrUser, IsUser
-from privilegies.models import Privilegies, Privilege
-from .models import Role, Rule
+
+
+import json
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Role
+from .forms import RoleForm
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from .serializers import RoleSerializer
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
+# Liste des catégories
+@require_http_methods(["GET"])
+def role_list(request):
+    roles = Role.objects.all()
+    
+    # Sérialiser les catégories
+    serializer = RoleSerializer(roles, many=True)  
+    return JsonResponse({
+        'response': serializer.data  
+    }, status=200)  # 200 OK
+
+@csrf_exempt
+def role_delete(request, pk):
+     
+    role = get_object_or_404(Role, pk=pk)
+    role.delete()
+    return JsonResponse({
+        'status': 'success',
+        'message': 'Role supprimé avec succès.'
+    }, status=204)  # 204 No Content
+@csrf_exempt
+def role_update(request, pk):
+    
+    if request.body:
+        data = json.loads(request.body)
+       
+        item = get_object_or_404(Role, pk=pk)
+       
 
 
-class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer
+        # Vérification si le role existe déjà 
+        if Role.objects.filter(role=data['role']).exclude(pk=item.pk).exists():
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Ce role existe déjà.'
+            }, status=400)  # 400 Bad Request
 
-    # def get_permissions(self):
-    #     if self.action in ['list', 'create', 'partial_update', 'retrieve', 'update']:
-    #         self.permission_classes = [IsAdmin]
-    #     elif self.action in ['list_except_admin']:
-    #         self.permission_classes = [IsUser]
-    #     elif self.action in ['partial_update', 'update']:
-    #         self.permission_classes = [IsAdminOrUser]
-    #     return super().get_permissions()
 
-    # Liste des rôles à l'exception de l'admin: rule/except_admin/
-    # Liste des roles a l'exception de admin: rule/except_admin/
-    @action(detail=False, methods=['get'], url_path='except_admin')
-    def list_except_admin(self, request):
-        roles = Role.objects.filter(active=True).exclude(role=Rule.ADMIN)
-        serializer = self.get_serializer(roles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        form = RoleForm(data, instance=item)
+        if form.is_valid():
+            item = form.save()
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Role mis à jour avec succès.',
+                'data': {
+                    'role': item.role,
+                }
+            }, status=200)  # 200 OK
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Les données fournies sont invalides.',
+            'errors': form.errors,
+        }, status=400)  # 400 Bad Request
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Aucune donnée fournie.'
+    }, status=400)  # 400 Bad Request
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def role_create(request):
+
+    if request.body:
+        
+        data = json.loads(request.body)
+        role = data.get("role")
+        
+
+        # Vérification de l'existence
+        if Role.objects.filter(role=role).exists():
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Ce role existe déjà.'
+            }, status=400)  # 400 Bad Request
+
+        # Créer la catégorie
+        form = RoleForm(data)
+        if form.is_valid():
+            item = form.save()
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Catégorie créée avec succès.',
+                'data': {
+                    'label': item.role,
+                    # 'description': RoleForm.description,
+                }
+            }, status=201)  # 201 Created
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Les données fournies sont invalides.',
+            'errors': form.errors,
+        }, status=400)  # 400 Bad Request
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Aucune donnée fournie.'
+    }, status=400)  # 400 Bad Request
 
