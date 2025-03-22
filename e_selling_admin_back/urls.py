@@ -1,39 +1,40 @@
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-# from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
 #     TokenRefreshView,
 # )
 
 # # from acheter.views import AcheterViewSet
-# from article.views import ArticleViewSet
+from article.views import ArticleViewSet
 # from cart.views import CartView
 # # from cart.views import CartViewSet
 # # from cart.views import CartView
 # # from cart.views import CartDetailView
 # from categorie.views import CategoriesViewSet
 # from client.views import ClientViewSet
-# from e_selling_admin_back import settings
+from e_selling_admin_back import settings
 # from member.views import MemberViewSet
 # from order.views import PasserCommandeView, OrderHistoryView, OrderListByOrganizationView
 # # from order.views import OrderViewSet, PasserCommandeView
-# from organisation.views import OrganisationViewSet
+from organisation.views import OrganisationViewSet
 # from passwordResetCode.views import SendPasswordResetCodeView, VerifyResetCodeView
 # from privilegies.views import PrivilegiesViewSet
 # from rule.views import RoleViewSet
 # # from smsorange.views import test_envoi_sms
 # from utilisateur.views import MyTokenObtainPairView, LogoutView, ChangePasswordView, CurrentUserView, \
 #     ResendPasswordResetCodeView, ResetPasswordView, CurrentClientView, UpdateClientView
+from utilisateur.views import MyTokenObtainPairView
 
-# from organisation import views as organisationView
-# router = DefaultRouter()
+from organisation import views as organisationView
+router = DefaultRouter()
 # router.register(r'member', MemberViewSet)
-# router.register(r'organisation', OrganisationViewSet)
+router.register(r'organisation', OrganisationViewSet)
 # router.register(r'rule', RoleViewSet)
 # router.register(r'privilegies', PrivilegiesViewSet)
-# router.register(r'article', ArticleViewSet)
+router.register(r'article', ArticleViewSet)
 # router.register(r'client', ClientViewSet)
 # router.register(r'categorie', CategoriesViewSet)
 # router.register(r'orders', OrderViewSet, basename='order')
@@ -60,19 +61,27 @@ urlpatterns = [
 #     # path('test-sms/', test_envoi_sms, name='test_envoi_sms'),
 #     # path('admin/', admin.site.urls),
 #     # path('sms/', include('sms_app.urls')),
-#     path('get-image', organisationView.serve_image),
+    path('get-image', organisationView.serve_image),
 #     path('truncate-table', organisationView.vider_tables),
 #     path('remove', organisationView.recuperer_et_supprimer_organisation),
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
     #Category route
     path('categorie/', include('categorie.urls')),
+    # path('article/', include('article.urls')),
+    path('member/', include('member.urls')),
+    path('client/', include('client.urls')),
+    path('cart/', include('cart.urls')),
     path('rule/', include('rule.urls')),
+    path('user/', include('utilisateur.urls')),
+     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+
 
 ]
 
 # Ajoutez les configurations pour les fichiers médias si en mode développement
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-#     # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

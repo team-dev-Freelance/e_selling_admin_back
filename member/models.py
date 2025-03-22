@@ -2,12 +2,12 @@
 import os
 
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
+# from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 
-from organisation.models import Organisation
-from privilegies.models import Privilegies, Privilege
-from rule.models import Role
-from utilisateur.models import User
+# from organisation.models import Organisation
+# from privilegies.models import Privilegies, Privilege
+# from rule.models import Role
+# # from utilisateur.models import User
 
 
 # class MemberManager(BaseUserManager):

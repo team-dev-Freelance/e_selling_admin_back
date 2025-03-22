@@ -56,7 +56,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-BASE_DIR_MEDIA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR_MEDIA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR_MEDIA, 'media')
@@ -342,7 +342,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+DEBUG = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

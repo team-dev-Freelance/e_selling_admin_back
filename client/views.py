@@ -1,124 +1,143 @@
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.utils.crypto import get_random_string
 from rest_framework import viewsets
-from rest_framework.exceptions import ValidationError
 
-from permissions import IsOwnerOrReadOnly
+from e_selling_admin_back import settings
 from rule.models import Role
 from utilisateur.models import Client
+
 # from .models import Client
 from .serializers import ClientSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
-import logging
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+# from .models import Utilisateur,Client
+# from .serializers import UtilisateurSerializer
 
-# Configurez un logger pour enregistrer les erreurs
-logger = logging.getLogger(__name__)
+@require_http_methods(["GET"])
+def client_list(request):
+    users = Client.objects.all()
+    # Sérialiser les catégories
+    serializer = ClientSerializer(users, many=True)  
+    return JsonResponse({
+        'response': serializer.data  
+    }, status=200)  # 200 OK
 
+@require_http_methods(["GET"])
+def get_client_by_id(request, client_id):
+    # Récupérer le membre ou retourner une erreur 404 s'il n'existe pas
+    client = get_object_or_404(Client, id=client_id)
 
-class ClientViewSet(viewsets.ModelViewSet):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
+    # Sérialiser le membre
+    serializer = ClientSerializer(client)  
 
-    # def get_permissions(self):
-    #     if self.action in ['retrieve', 'update', 'deactivate_client', 'partial_update']:
-    #         self.permission_classes = [IsOwnerOrReadOnly]
-    #     return super().get_permissions()
+    # Retourner la réponse JSON
+    return JsonResponse({
+        'status': 'success',
+        'client': serializer.data  
+    }, status=200)  # 200 OK
 
-    # Liste des clients: client/
-    def list(self, request):
-        clients = Client.objects.all().distinct()
-        serializer = ClientSerializer(clients, many=True)
-        return Response(serializer.data)
-
-    def create(self, request):
-        serializer = ClientSerializer(data=request.data)
-
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            email = serializer.validated_data['email']
-            phone = serializer.validated_data['phone']
-            password = serializer.validated_data['password']
-
-            try:
-                role, created = Role.objects.get_or_create(role='CLIENT')
-
-                client = Client(
-                    username=username,
-                    email=email,
-                    phone=phone,
-                    rule=role
-                )
-                client.set_password(password)
-                client.save()
-
-                return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
-
-            except ValidationError as e:
-                logger.error(f"Erreur de validation : {str(e)}")  # Enregistrer l'erreur de validation
-                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-            except Exception as e:
-                # Enregistrer l'erreur générale pour comprendre le problème
-                logger.error(f"Erreur inattendue : {str(e)}")
-                return Response({"detail": f"Une erreur s'est produite : {str(e)}"},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Un client par son id: client/profileClient/
-    @action(detail=False, methods=['get'], url_path='profileClient')
-    def profile(self, request):
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_client(request):
+    # Vérifier si le corps de la requête contient des données
+    if request.body:
         try:
-            client = Client.objects.get(pk=request.user.id)
-        except Client.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ClientSerializer(client)
-        return Response(serializer.data)
+            # Charger les données JSON du corps de la requête
+            data = json.loads(request.body)
 
-    # Mise a jour d'un client: client/{id}/
-    def update(self, request, pk=None):
+            # Obtenir les informations de l'utilisateur
+            email = data.get("email")
+            nom = data.get("nom")
+            phone = data.get("phone")
+            password = data.get("password")
+            # password = get_random_string(length=8)
+
+            # Vérifier la présence des données obligatoires
+            if not all([email, nom, password]):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Tous les champs requis (email, nom, password) doivent être fournis.'
+                }, status=400)  # 400 Bad Request
+
+            # Créer ou obtenir le rôle ADMIN
+            role, created = Role.objects.get_or_create(role='CLIENT')
+
+            # Créer l'utilisateur
+            utilisateur = Client.objects.create_user(
+                email=email,
+                password=password, 
+                nom=nom,
+                phone=phone,
+                rule=role
+            )
+            # send_welcome_email(utilisateur, password)
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Client créé avec succès!',
+                'user_email': utilisateur.email
+            }, status=201)  # 201 Created
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Données JSON invalides.'
+            }, status=400)  # 400 Bad Request
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)  # 500 Internal Server Error
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Aucune donnée fournie.'
+    }, status=400)  # 400 Bad Request
+@csrf_exempt
+def delete_all_clients(request):
+    if request.method == 'POST':  # Assurez-vous que la méthode est POST
         try:
-            client = Client.objects.get(pk=pk)
-        except Client.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ClientSerializer(client, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Supprime tous les objets de la table Client
+            count, _ = Client.objects.all().delete()  # Delete renvoie le nombre d'objets supprimés
 
-    # Mise a jour partielle d'un client: client/{id}/ avec PATCH
-    def partial_update(self, request, pk=None):
-        try:
-            client = Client.objects.get(pk=pk)
-        except Client.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ClientSerializer(client, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({
+                'status': 'success',
+                'message': f'Tous les membres ont été supprimés. Nombre de membres supprimés: {count}'
+            }, status=200)  # 200 OK
 
-    # Liste des clients actives: client/list_active_clients/
-    @action(detail=False, methods=['get'])
-    def list_active_clients(self, request):
-        active_clients = Client.objects.filter(active=True).distinct()
-        serializer = self.get_serializer(active_clients, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)  # Renvoie l'erreur si quelque chose ne va pas
+            }, status=500)  # 500 Internal Server Error
 
-    # Desactiver un client: client/deactivate/
-    @action(detail=False, methods=['post'], url_path='deactivate')
-    def deactivate_client(self, request):
-        client_id = request.data.get('id')
-        client = get_object_or_404(Client, id=client_id)
-        if client.active:
-            client.active = False
-            client.save()
-            return Response({'status': 'client deactivated'}, status=status.HTTP_200_OK)
-        else:
-            client.active = True
-            client.save()
-            return Response({'status': 'client activated'}, status=status.HTTP_200_OK)
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Méthode non autorisée. Utilisez POST.'
+    }, status=405)  # 405 Method Not Allowed
 
+def send_welcome_email( Client, password):
+    subject = 'Bienvenue dans GIC Connect'
+    message = f"""
+    Bonjour {Client.nom},
+
+    Votre compte a été créé avec succès. Voici vos informations de connexion :
+
+    - Nom d'utilisateur : {Client.email}
+    - Mot de passe : {password}
+
+    Merci de nous avoir rejoints !
+
+    Cordialement,
+    L'équipe GIC Connect
+    """
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [Client.email]
+
+    send_mail(subject, message, from_email, recipient_list)

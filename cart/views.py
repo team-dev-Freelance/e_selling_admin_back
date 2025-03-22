@@ -1,108 +1,50 @@
-from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated  # Import du permission class
-
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .models import Cart
 from article.models import Article
 from utilisateur.models import Client
-from .models import Cart, CartItem
-from .serializers import CartSerializer
+from django.shortcuts import  get_object_or_404
 
 
-class CartView(APIView):
-    permission_classes = [IsAuthenticated]
+@api_view(['POST'])
+def add_to_cart(request):
+    try:
+        # Récupérer les données envoyées par l'utilisateur
+        article_id = request.data.get('article')
+        client_id = request.data.get('client_id')
+        quantity = request.data.get('quantity', 1)  # Valeur par défaut: 1
 
-    def get(self, request):
-        client = getattr(request.user, 'client', None)
-        if not client:
-            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
-
-        cart, created = Cart.objects.get_or_create(client=client)
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
-
-    def post(self, request):
-        client = getattr(request.user, 'client', None)
-        if not client:
-            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
-
-        cart_items = request.data.get('cart_items', [])
-
-        if not cart_items:
-            return Response({'error': 'Aucun article à ajouter.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        first_new_item = cart_items[0]
-        new_article_id = first_new_item.get('article')
-        new_article_quantity = first_new_item.get('quantity')
-
-        if not new_article_id or new_article_quantity is None:
-            return Response({'error': 'Données d\'article ou de quantité manquantes pour le premier article.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if new_article_quantity <= 0:
-            return Response({'error': 'La quantité doit être supérieure à zéro.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        # Vérifier que l'article existe
         try:
-            new_article = Article.objects.get(id=new_article_id)
-            new_article_organisation = new_article.member.organisation
-
-            # Vérifier s'il existe un panier pour le client
-            cart, created = Cart.objects.get_or_create(client=client)
-            existing_cart_item = cart.cartitem_set.first()
-            existing_organisation = existing_cart_item.article.member.organisation if existing_cart_item else None
-
-            if existing_organisation and existing_organisation != new_article_organisation:
-                cart.cartitem_set.all().delete()  # Vider les articles existants
-                cart.delete()  # Supprimer le panier existant
-                cart = Cart.objects.create(client=client)  # Créer un nouveau panier
-
-            # Ajouter tous les articles au panier (après vérification)
-            for item in cart_items:
-                article_id = item.get('article')
-                quantity = item.get('quantity')
-
-                if not article_id or quantity is None:
-                    return Response({'error': 'Données d\'article ou de quantité manquantes.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-                if quantity <= 0:
-                    return Response({'error': f'Quantité non valide pour l\'article {article_id}. La quantité doit être supérieure à zéro.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-                try:
-                    article = Article.objects.get(id=article_id)
-                    cart_item, created = CartItem.objects.get_or_create(cart=cart, article=article)
-                    cart_item.quantity = quantity
-                    cart_item.save()
-                except Article.DoesNotExist:
-                    return Response({'error': f'Article {article_id} non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
-
+            article = Article.objects.get(id=article_id)
         except Article.DoesNotExist:
-            return Response({'error': f'Article {new_article_id} non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            print(f"Erreur lors de la création/ajout au panier : {e}")
-            return Response({'error': 'Erreur lors de l\'ajout d\'articles au panier.'},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"message": "Article non trouvé."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
+        # Vérifier si le client existe
+        client  = get_object_or_404(Client, id= client_id)
 
-    def delete(self, request, item_id):
-        client = getattr(request.user, 'client', None)
-        if not client:
-            return Response({'error': 'Client non trouvé pour cet utilisateur.'}, status=status.HTTP_404_NOT_FOUND)
+        # Vérifier si l'article est déjà dans le panier
+        cart_item, created = Cart.objects.get_or_create(client=client, article=article)
 
-        try:
-            cart_item = CartItem.objects.get(id=item_id, cart__client=client)
-            cart_item.delete()
+        if not created:
+            # Si l'article existe déjà, on met à jour la quantité
+            cart_item.quantity += int(quantity)
+            cart_item.save()
+        else:
+            # Sinon, on ajoute un nouvel article avec la quantité demandée
+            cart_item.quantity = int(quantity)
+            cart_item.save()
 
-            cart = Cart.objects.get(client=client)
-            serializer = CartSerializer(cart)
-            return Response(serializer.data)
-        except CartItem.DoesNotExist:
-            return Response({'error': 'L\'élément du panier est introuvable'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            print(f"Erreur lors de la suppression de l'élément du panier : {e}")
-            return Response({'error': 'Erreur lors de la suppression de l\'élément.'},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({
+            "message": "Article ajouté au panier avec succès.",
+            "cart_item": {
+                "article": article.label,
+                "quantity": cart_item.quantity,
+                "subtotal": article.price * cart_item.quantity
+            }
+        }, status=status.HTTP_201_CREATED)
 
+    except Exception as e:
+        return Response({"error": f"Erreur : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

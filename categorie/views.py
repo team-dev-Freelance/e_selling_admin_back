@@ -22,7 +22,7 @@ def categorie_list(request):
 
 # Créer une nouvelle catégorie avec vérification d'existence
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET"])
 def categorie_create(request):
 
     if request.body:
@@ -39,8 +39,8 @@ def categorie_create(request):
             }, status=400)  # 400 Bad Request
 
         # Créer la catégorie
-        form = CategorieForm(data)
-        if form.is_valid():
+        # form = CategorieForm(data)
+        # if form.is_valid():
             categorie = form.save()
             return JsonResponse({
                 'status': 'success',
@@ -50,6 +50,7 @@ def categorie_create(request):
                     # 'description': categorie.description,
                 }
             }, status=201)  # 201 Created
+        
         return JsonResponse({
             'status': 'error',
             'message': 'Les données fournies sont invalides.',
@@ -62,7 +63,6 @@ def categorie_create(request):
     }, status=400)  # 400 Bad Request
 
 # Mettre à jour une catégorie existante
-# @require_http_methods(["PUT"])
 @csrf_exempt
 def categorie_update(request, pk):
    
