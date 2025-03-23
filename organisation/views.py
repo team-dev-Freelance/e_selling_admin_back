@@ -12,22 +12,15 @@ from permissions import IsAdmin, IsCreatorOrReadOnly, IsMemberOrUser, IsMemberOf
     IsMemberUserOfOrganisation, IsUser, IsOwnerOrReadOnly
 from .models import Organisation
 from .serializers import OrganisationSerializer
+import os
+from django.conf import settings
+
 
 
 class OrganisationViewSet(viewsets.ModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
 
-    # def get_permissions(self):
-    #     if self.action in ['partial_update', 'retrieve', 'update', 'list_members', 'deactivate_org', 'list_members_active']:
-    #         self.permission_classes = [IsAdmin]
-    #     elif self.action in ['list_articles', 'list_articles_by_category']:
-    #         self.permission_classes = [IsMemberOfOrganisation]
-    #     elif self.action in ['list', 'create', 'retrieve', 'list_active_organisations']:
-    #         self.permission_classes = [IsAdmin]
-    #     elif self.action in ['list_active_organisation', 'list_articles_by_category']:
-    #         self.permission_classes = [IsUser]
-    #     return super().get_permissions()
 
     def list(self, request):
         organisations = Organisation.objects.all().distinct()
@@ -35,12 +28,6 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        # serializer = OrganisationSerializer(data=request.data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # Récupérer les données de la requête
         logo = request.FILES.get('logo')
         label = request.data.get('label')
         description = request.data.get('description')
@@ -78,13 +65,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        # organisation = get_object_or_404(Organisation, pk=pk)
-        # serializer = OrganisationSerializer(organisation, data=request.data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # Vérifier si l'organisation existe
+       
         try:
             organisation = Organisation.objects.get(pk=pk)
         except Organisation.DoesNotExist:
@@ -217,9 +198,6 @@ class OrganisationViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_404_NOT_FOUND)
         return Response({"detail": "L'utilisateur courant n'est pas un membre."}, status=status.HTTP_403_FORBIDDEN)
 
-import os
-from django.conf import settings
-
 
 def serve_image(request):
     # Nom du fichier image passé en paramètre GET
@@ -244,25 +222,3 @@ def serve_image(request):
             return response
     else:
         return HttpResponse('L\'image demandée n\'existe pas', status=404)
-
-from django.db import transaction
-from categorie.models import Categorie
-from article.models import Article
-from organisation.models import Organisation
-
-def vider_tables(request):
-        # Vider la table Article
-        Article.objects.all().delete()
-        
-        # Vider la table Categorie
-        Categorie.objects.all().delete()
-          # Vider la table Organisation
-        Organisation.objects.all().delete()
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Organisation
-
-def recuperer_et_supprimer_organisation(request):
-    # Récupérer l'organisation par ID
-    organisation = get_object_or_404(Categorie, id=10)
-
-    organisation.delete()

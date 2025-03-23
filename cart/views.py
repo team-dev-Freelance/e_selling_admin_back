@@ -6,6 +6,7 @@ from .models import Cart
 from article.models import Article
 from utilisateur.models import Client
 from django.shortcuts import  get_object_or_404
+from .serializers  import CartSerializer
 
 
 @api_view(['POST'])
@@ -48,3 +49,9 @@ def add_to_cart(request):
 
     except Exception as e:
         return Response({"error": f"Erreur : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['GET'])
+def get_orders_received_by_member(request,member_id):
+    carts = Cart.objects.filter(article__member=member_id)
+    # carts = Cart.objects.filter(article__member=member_id).select_related("client", "article")
+    serializer = CartSerializer(carts, many=True)  # Sérialisation
+    return Response(serializer.data, status=status.HTTP_200_OK)
