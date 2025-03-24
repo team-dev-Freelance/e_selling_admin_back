@@ -52,11 +52,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-     # Liste des categories actives: categorie/list_active_categories/
-     @action(detail=False, methods=['get'])
-     def list_active_categories(self, request):
-         active_categories = Categorie.objects.all()
-         serializer = self.get_serializer(active_categories, many=True)
-         return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
  
