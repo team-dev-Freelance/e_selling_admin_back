@@ -12,7 +12,6 @@ from permissions import IsMemberOrUser, IsCreatorOrReadOnly
 from .models import Categorie
 from .serializers import CategorieSerializer
 
-
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categorie.objects.all()
     serializer_class = CategorieSerializer
@@ -53,5 +52,17 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+    # Liste des articles d'une categorie: categorie/{id}/list_articles/
+    @action(detail=True, methods=['get'])
+    def list_articles(self, request, pk=None):
+         try:
+             categorie = Categorie.objects.get(pk=pk)
+         except Categorie.DoesNotExist:
+             return Response({"error": "Categorie not found."}, status=404)
+ 
+         articles = Article.objects.filter(category=categorie.id).distinct()  # Obtenir tous les articles de la categorie
+         serializer = ArticleSerializer(articles, many=True)
+         return Response(serializer.data)
 
  

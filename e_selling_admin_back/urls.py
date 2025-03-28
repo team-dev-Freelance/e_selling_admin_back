@@ -14,7 +14,7 @@ from article.views import ArticleViewSet
 # # from cart.views import CartView
 # # from cart.views import CartDetailView
 from categorie.views import CategoriesViewSet
-# from client.views import ClientViewSet
+from client.views import ClientViewSet
 from e_selling_admin_back import settings
 # from member.views import MemberViewSet
 # from order.views import PasserCommandeView, OrderHistoryView, OrderListByOrganizationView
@@ -35,7 +35,7 @@ router.register(r'organisation', OrganisationViewSet)
 # router.register(r'rule', RoleViewSet)
 # router.register(r'privilegies', PrivilegiesViewSet)
 router.register(r'article', ArticleViewSet)
-# router.register(r'client', ClientViewSet)
+router.register(r'client', ClientViewSet)
 router.register(r'categorie', CategoriesViewSet)
 # router.register(r'orders', OrderViewSet, basename='order')
 # router.register(r'acheter', AcheterViewSet)
@@ -69,7 +69,7 @@ urlpatterns = [
     # path('categorie/', include('categorie.urls')),
     # path('article/', include('article.urls')),
     path('member/', include('member.urls')),
-    path('client/', include('client.urls')),
+    # path('client/', include('client.urls')),
     path('cart/', include('cart.urls')),
     path('rule/', include('rule.urls')),
     path('user/', include('utilisateur.urls')),
