@@ -14,7 +14,7 @@ def add_to_cart(request):
     try:
         # Récupérer les données envoyées par l'utilisateur
         article_id = request.data.get('article')
-        client_id = request.data.get('client_id')
+        client_id = request.user.id
         quantity = request.data.get('quantity', 1)  # Valeur par défaut: 1
 
         # Vérifier que l'article existe
