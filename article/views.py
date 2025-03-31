@@ -45,7 +45,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             label = request.data.get('label')
             price = request.data.get('price')
             logo = request.FILES.get('logo')
-            description = request.FILES.get('description')
+            description = request.data.get('description')
 
             # Vérifier si tous les champs nécessaires sont présents
             if not all([categorie_id, label, price]):
