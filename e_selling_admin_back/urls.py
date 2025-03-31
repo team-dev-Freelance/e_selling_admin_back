@@ -61,6 +61,8 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('sms/', include('sms_app.urls')),
     path('get-image', organisationView.serve_image),
+    path('user/', include('utilisateur.urls')),
+
     path('', include(router.urls)),
 ]
 
