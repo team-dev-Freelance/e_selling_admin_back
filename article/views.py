@@ -45,6 +45,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             label = request.data.get('label')
             price = request.data.get('price')
             logo = request.FILES.get('logo')
+            description = request.FILES.get('description')
 
             # Vérifier si tous les champs nécessaires sont présents
             if not all([categorie_id, label, price]):
@@ -77,7 +78,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
                 category=category_instance,
                 label=label,
                 price=price,
-                logo=logo
+                logo=logo,
+                description=description
             )
 
             # Enregistrer l'article dans la base de données
