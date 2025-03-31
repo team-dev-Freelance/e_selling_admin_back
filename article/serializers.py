@@ -14,7 +14,10 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ['id', 'label', 'price', 'category_id', 'member', 'logo', 'category','description']
-
+    def get_logo(self, obj):
+            if obj.logo:
+                return f"/media/{obj.logo.name}"
+            return None
     # def get_logo_url(self, obj):
     #     if obj.logo:
     #         request = self.context.get('request')

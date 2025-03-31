@@ -210,6 +210,8 @@ from django.views.decorators.http import require_http_methods
 from .models import Utilisateur, Role
 from .serializers import UtilisateurSerializer
 
+
+
 @require_http_methods(["GET"])
 def user_list(request):
     users = Utilisateur.objects.all()

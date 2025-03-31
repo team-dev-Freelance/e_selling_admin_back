@@ -84,6 +84,7 @@ class MemberViewSet(viewsets.ModelViewSet):
             #     organisation = Organisation.objects.get(id=organisation_id) if organisation_id else None
 
             # Génère un mot de passe aléatoire
+            # password = "00000"
             password = get_random_string(length=8)
             role, _ = Role.objects.get_or_create(role='MEMBER')
             # Crée le membre avec le mot de passe généré
