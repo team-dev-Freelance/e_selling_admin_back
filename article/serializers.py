@@ -9,7 +9,9 @@ from member.serializers import MemberSerializer
 class ArticleSerializer(serializers.ModelSerializer):
     category = CategorieSerializer(read_only=True)
     category_id = serializers.IntegerField(required=False, write_only=True)
-    logo = serializers.ImageField(required=True)
+    # logo = serializers.ImageField(required=True)
+    logo = serializers.SerializerMethodField()
+
     member = MemberSerializer()
     class Meta:
         model = Article
