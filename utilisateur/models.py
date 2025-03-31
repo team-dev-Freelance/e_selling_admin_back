@@ -36,7 +36,7 @@ class Utilisateur(AbstractBaseUser):
     active = models.BooleanField(default=True)
     rule = models.ForeignKey(Role, on_delete=models.CASCADE, null=False, blank=False) 
     logo = models.ImageField(upload_to='photos/', default='media/photos/logo.jpeg')
-    # status = models.BooleanField(default=False)
+    status = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
