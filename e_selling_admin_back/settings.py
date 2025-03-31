@@ -56,7 +56,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# BASE_DIR_MEDIA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR_MEDIA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR_MEDIA, 'media')
@@ -88,7 +88,7 @@ DB_USERNAME='root'
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
     
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,102.220.19.164,'http://e-commerce.enspm.univ-maroua.cm'").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,102.220.19.164,'http://e-commerce.enspm.univ-maroua.cm/'").split(",")
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
@@ -99,7 +99,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://102.220.19.164:3000',
     'http://127.0.0.1:8000',
     'http://localhost:46759',
-    'http://e-commerce.enspm.univ-maroua.cm'
+    # 'http://e-commerce.enspm.univ-maroua.cm/'
 
 ]
 
@@ -108,7 +108,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4200',
     'http://102.220.19.164:8082',
     'https://web-production-1ab04.up.railway.app',
-    'http://e-commerce.enspm.univ-maroua.cm',
+    'http://e-commerce.enspm.univ-maroua.cm/',
     'https://esellingadminfront-production.up.railway.app',
     'http://102.220.19.164:4200',
     'http://127.0.0.1:8000',
@@ -342,7 +342,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-# DEBUG = True
+DEBUG = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

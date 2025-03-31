@@ -1,98 +1,127 @@
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from django.utils.crypto import get_random_string
 from rest_framework import viewsets
-from e_selling_admin_back import settings
+from rest_framework.exceptions import ValidationError
+
+from permissions import IsOwnerOrReadOnly
 from rule.models import Role
 from utilisateur.models import Client
+# from .models import Client
 from .serializers import ClientSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils.translation import gettext as _
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+
 import logging
 
+# Configurez un logger pour enregistrer les erreurs
 logger = logging.getLogger(__name__)
+
+
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
-    # Customer's list client/
+
+    # Liste des clients: client/
     def list(self, request):
-        client = Client.objects.all()
-        serializer = ClientSerializer(client, many=True)
+        clients = Client.objects.all().distinct()
+        serializer = ClientSerializer(clients, many=True)
         return Response(serializer.data)
 
-    # Create customer client/
     def create(self, request):
-        email = request.data.get('email')
-        nom = request.data.get('nom')
-        phone = request.data.get('phone')
-        password = request.data.get('password')
+        serializer = ClientSerializer(data=request.data)
 
-        # Validate inputs
-        if not email or not nom or not phone or not password:
-            return Response(
-                {'message': _('Tous les champs sont obligatoires!'), 'status': 'error'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if serializer.is_valid():
+            name = serializer.validated_data['name']
+            email = serializer.validated_data['email']
+            phone = serializer.validated_data['phone']
+            # password = serializer.validated_data['password']
+            password = request.data.get("password")
+            role, created = Role.objects.get_or_create(role='CLIENT')
 
-        if Client.objects.filter(email=email).exists():
-            return Response(
-                {'message': _('L\'utilisateur existe déjà.'), 'status': 'error'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            if len(password) < 4:
+                return Response(
+                    {'message': _('Le mot de passe doit contenir au moins 4 caractères.'), 'status': 'error'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
-        # Password strength validation (example: minimum length)
-        if len(password) < 4:
-            return Response(
-                {'message': _('Le mot de passe doit contenir au moins 4 caractères.'), 'status': 'error'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            try:
 
-        # Create or get the role
-        role, created = Role.objects.get_or_create(role='CLIENT')
+                client = Client(
+                    name=name,
+                    email=email,
+                    phone=phone,
+                     rule=role
+                )
+                client.set_password(password)
+                client.save()
 
+                return Response(ClientSerializer(client).data, status=status.HTTP_201_CREATED)
+
+            except ValidationError as e:
+                logger.error(f"Erreur de validation : {str(e)}")  # Enregistrer l'erreur de validation
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+            except Exception as e:
+                # Enregistrer l'erreur générale pour comprendre le problème
+                logger.error(f"Erreur inattendue : {str(e)}")
+                return Response({"detail": f"Une erreur s'est produite : {str(e)}"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Un client par son id: client/profileClient/
+    @action(detail=False, methods=['get'], url_path='profileClient')
+    def profile(self, request):
         try:
-            # Create the user
-            utilisateur = Client.objects.create_user(
-                email=email,
-                password=password,
-                nom=nom,
-                phone=phone,
-                rule=role
-            )
-            return Response(
-                {
-                    'status': 'success',
-                    'message': _('Client créé avec succès!'),
-                    'user_email': utilisateur.email
-                },
-                status=status.HTTP_201_CREATED
-            )
-        except ValidationError as e:
-            logger.error(f"Validation error: {str(e)}")
-            return Response(
-                {'message': _('Erreur de validation. Veuillez vérifier vos données.'), 'status': 'error'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            logger.error(f"Erreur lors de la création de l'utilisateur: {str(e)}")
-            return Response(
-                {'message': _('Une erreur est survenue. Veuillez réessayer plus tard.'), 'status': 'error'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-    # Get customer by id: client/{id}/
-    def retrieve(self, request, pk=None):
-        try:
-            client = Client.objects.get(pk=pk)
+            client = Client.objects.get(pk=request.user.id)
         except Client.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ClientSerializer(client)
         return Response(serializer.data)
-    
+
+    # Mise a jour d'un client: client/{id}/
+    def update(self, request, pk=None):
+        try:
+            client = Client.objects.get(pk=pk)
+        except Client.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ClientSerializer(client, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Mise a jour partielle d'un client: client/{id}/ avec PATCH
+    def partial_update(self, request, pk=None):
+        try:
+            client = Client.objects.get(pk=pk)
+        except Client.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ClientSerializer(client, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Liste des clients actives: client/list_active_clients/
+    @action(detail=False, methods=['get'])
+    def list_active_clients(self, request):
+        active_clients = Client.objects.filter(active=True).distinct()
+        serializer = self.get_serializer(active_clients, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # Desactiver un client: client/deactivate/
+    @action(detail=False, methods=['post'], url_path='deactivate')
+    def deactivate_client(self, request):
+        client_id = request.data.get('id')
+        client = get_object_or_404(Client, id=client_id)
+        if client.active:
+            client.active = False
+            client.save()
+            return Response({'status': 'client deactivated'}, status=status.HTTP_200_OK)
+        else:
+            client.active = True
+            client.save()
+            return Response({'status': 'client activated'}, status=status.HTTP_200_OK)
+

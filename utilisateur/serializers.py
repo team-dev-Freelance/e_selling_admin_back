@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         def validate(self, attrs):
-            email = attrs.get("username")
+            email = attrs.get("email")
             password = attrs.get("password")
 
             # Authentifier l'utilisateur
@@ -25,8 +25,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
             attrs['user'] = user
             data = super().validate(attrs)
-            # data['rule'] = user.rule.role
-            # data['user_id'] = user.id
+            data['rule'] = user.rule.role
+            data['user_id'] = user.id
 
             # if hasattr(user, 'member'):
             #     data['organisation_id'] = user.member.organisation.id
@@ -40,6 +40,6 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     rule = RoleSerializer() 
     class Meta:
         model = Utilisateur
-        fields = ['id', "email" , "nom" , "phone" ,"rule" , "logo"]
+        fields = ['id', "email" , "name" , "phone" ,"rule" , "logo"]
 
     

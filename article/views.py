@@ -10,9 +10,6 @@ from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.http import JsonResponse
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -46,7 +43,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
             # Récupérer les données de la requête
             categorie_id = request.data.get('category_id')
             label = request.data.get('label')
-            description = request.data.get('description')
             price = request.data.get('price')
             logo = request.FILES.get('logo')
 
@@ -80,7 +76,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
                 member=request.user.member,  # Récupérer le membre de l'utilisateur
                 category=category_instance,
                 label=label,
-                description=description,
                 price=price,
                 logo=logo
             )

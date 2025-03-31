@@ -31,7 +31,7 @@ class UserManager(BaseUserManager):
 
 class Utilisateur(AbstractBaseUser):
     email = models.EmailField(unique=True)
-    nom = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20,  blank=True)
     active = models.BooleanField(default=True)
     rule = models.ForeignKey(Role, on_delete=models.CASCADE, null=False, blank=False) 
@@ -46,6 +46,15 @@ class Utilisateur(AbstractBaseUser):
     # REQUIRED_FIELDS = ['email']
 
     
+    def __str__(self):
+        return self.email
+    def clean(self):
+        super().clean()
+        if not self.phone.startswith(('65', '67', '68', '69')):
+            raise ValueError('Le numéro doit commencer par 65, 67, 68 ou 69.')
+        if len(self.phone) != 9 or not self.phone.isdigit():
+            raise ValueError('Le numéro de téléphone doit avoir 9 chiffres.')
+
     def __str__(self):
         return self.email
 

@@ -37,7 +37,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
         formatted_response = {
             'access': response.data.get('access'),
             'refresh': response.data.get('refresh'),
-            'user_id': user.id,
+            # 'user_id': user.id,
             'role': user.rule.role
         }
         return   Response(formatted_response)
@@ -64,16 +64,17 @@ class CurrentUserView(APIView):
         organisation_data = None
 
         # Vérifiez si l'utilisateur est un Member et a une organisation
-        if hasattr(user, 'member'):
-            organisation = user.member.organisation
-            organisation_data = OrganisationSerializer(organisation).data
+        # if hasattr(user, 'member'):
+        #     organisation = user.member.organisation
+        #     organisation_data = OrganisationSerializer(organisation).data
 
         user_data = {
             "id": user.id,
-            "username": user.username,
+            "name": user.name,
             "email": user.email,
+            "phone": user.phone,
             "role": user.rule.role if hasattr(user, 'rule') else None,
-            "organisation": organisation_data,  # Incluez l'objet organisation ici
+            # "organisation": organisation_data,  # Incluez l'objet organisation ici
             "is_admin": user.is_staff,
         }
         return Response(user_data, status=status.HTTP_200_OK)
@@ -244,15 +245,15 @@ def create_admin_user(request):
 
             # Obtenir les informations de l'utilisateur
             email = data.get("email")
-            nom = data.get("nom")
+            name = data.get("name")
             phone = data.get("phone")
             password = data.get("password")
 
             # Vérifier la présence des données obligatoires
-            if not all([email, nom, password]):
+            if not all([email, name, password]):
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tous les champs requis (email, nom, password) doivent être fournis.'
+                    'message': 'Tous les champs requis (email, name, password) doivent être fournis.'
                 }, status=400)  # 400 Bad Request
 
             # Créer ou obtenir le rôle ADMIN
@@ -262,7 +263,7 @@ def create_admin_user(request):
             utilisateur = Utilisateur.objects.create_user(
                 email=email,
                 password=password, 
-                nom=nom,
+                name=name,
                 phone=phone,
                 rule=role
             )

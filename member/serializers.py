@@ -22,15 +22,15 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         # fields = ['id', 'username', 'email', 'phone', 'organisation_id', 'rule_id']
-        fields = ['id', "email" , "nom" , "phone"  , "logo"]
+        fields = ['id', "email" , "name" , "phone"  , "logo"]
 
-    # def create(self, validated_data):
-    #     # `validated_data` ne contient pas `rule` ou `organisation` ici
-    #     return Member.objects.create(**validated_data)
+    def create(self, validated_data):
+        # `validated_data` ne contient pas `rule` ou `organisation` ici
+        return Member.objects.create(**validated_data)
 
-    # def validate_phone(self, value):
-    #     if not value.startswith(('62', '65', '67', '68', '69')):
-    #         raise serializers.ValidationError('Le numéro doit commencer par 62, 65, 67, 68 ou 69.')
-    #     if len(value) != 9 or not value.isdigit():
-    #         raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
-    #     return value
+    def validate_phone(self, value):
+        if not value.startswith(('62', '65', '67', '68', '69')):
+            raise serializers.ValidationError('Le numéro doit commencer par 62, 65, 67, 68 ou 69.')
+        if len(value) != 9 or not value.isdigit():
+            raise serializers.ValidationError('Le numéro de téléphone doit avoir 9 chiffres.')
+        return value
