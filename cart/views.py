@@ -44,17 +44,17 @@ class CartView(APIView):
 
         try:
             new_article = Article.objects.get(id=new_article_id)
-            new_article_organisation = new_article.member.organisation
+            # new_article_organisation = new_article.member.organisation
 
             # Vérifier s'il existe un panier pour le client
-            cart, created = Cart.objects.get_or_create(client=client)
-            existing_cart_item = cart.cartitem_set.first()
-            existing_organisation = existing_cart_item.article.member.organisation if existing_cart_item else None
+            # cart, created = Cart.objects.get_or_create(client=client)
+            # existing_cart_item = cart.cartitem_set.first()
+            # # # existing_organisation = existing_cart_item.article.member.organisation if existing_cart_item else None
 
-            if existing_organisation and existing_organisation != new_article_organisation:
-                cart.cartitem_set.all().delete()  # Vider les articles existants
-                cart.delete()  # Supprimer le panier existant
-                cart = Cart.objects.create(client=client)  # Créer un nouveau panier
+            # # if existing_organisation and existing_organisation != new_article_organisation:
+            # #     cart.cartitem_set.all().delete()  # Vider les articles existants
+            # #     cart.delete()  # Supprimer le panier existant
+            cart = Cart.objects.create(client=client)  # Créer un nouveau panier
 
             # Ajouter tous les articles au panier (après vérification)
             for item in cart_items:
