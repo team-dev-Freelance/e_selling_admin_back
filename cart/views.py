@@ -47,8 +47,8 @@ class CartView(APIView):
             # new_article_organisation = new_article.member.organisation
 
             # Vérifier s'il existe un panier pour le client
-            # cart, created = Cart.objects.get_or_create(client=client)
-            # existing_cart_item = cart.cartitem_set.first()
+            cart, created = Cart.objects.get_or_create(client=client)
+            existing_cart_item = cart.cartitem_set.first()
             # # # existing_organisation = existing_cart_item.article.member.organisation if existing_cart_item else None
 
             # # if existing_organisation and existing_organisation != new_article_organisation:

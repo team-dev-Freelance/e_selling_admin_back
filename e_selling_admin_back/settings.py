@@ -99,7 +99,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://102.220.19.164:3000',
     'http://127.0.0.1:8000',
     'http://localhost:46759',
-    # 'http://e-commerce.enspm.univ-maroua.cm/'
+    'http://e-commerce.enspm.univ-maroua.cm/'
 
 ]
 

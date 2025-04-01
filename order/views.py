@@ -14,7 +14,7 @@ from utilisateur.models import Member, Client
 class PasserCommandeView(APIView):
     def post(self, request):
         try:
-            client = Client.objects.get(username=request.user.username)
+            client = Client.objects.get(email=request.user.email)
             panier = Cart.objects.get(client=client)  # Récupérer le panier du client
 
             if panier.articles.count() == 0:  # Vérifie si le panier est vide
@@ -32,23 +32,23 @@ class PasserCommandeView(APIView):
                 total_price += item.article.price * item.quantity  # Calculez le prix total
 
             # Trouver l'organisation associée aux articles du panier
-            article_organisation = panier.cartitem_set.first().article.member.organisation
+            # article_organisation = panier.cartitem_set.first().article.member.organisation
 
             # Trouver l'admin de l'organisation (membre avec le rôle 'ADMIN')
             admin_organisation = Member.objects.filter(
                 organisation=article_organisation,
-                rule__role='USER'  # Vérifiez que cela correspond bien au rôle que vous avez défini
+                # rule__role='USER'  # Vérifiez que cela correspond bien au rôle que vous avez défini
             ).first()
 
             if admin_organisation:
                 # Préparer l'email à envoyer à l'admin de l'organisation
                 subject_admin = "Nouvelle commande passée"
                 message_admin = f"""
-                Bonjour {admin_organisation.username},
+                Bonjour {admin_organisation.name},
 
                 Une nouvelle commande a été passée pour l'organisation {article_organisation.label}.
 
-                Client : {client.username}
+                Client : {client.name}
                 Numéro de téléphone : {client.phone}
                 Prix total : {total_price} Fcfa
 
@@ -69,7 +69,7 @@ class PasserCommandeView(APIView):
                 # Préparer l'email à envoyer au client
                 subject_client = "Confirmation de votre commande"
                 message_client = f"""
-                Bonjour {client.username},
+                Bonjour {client.name},
 
                 Merci pour votre commande ! Voici un récapitulatif :
 
